@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="RegularTextStyle">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/regular_text_size_16</item>
+        <item name="android:textFontWeight">400</item>
+    </style>
+
+    <style name="MealSmallTextStyle">
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:textSize">@dimen/small_text_size_11</item>
+        <item name="android:textFontWeight">400</item>
+    </style>
+
+    <style name="MealTitleStyle">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/text_size_16</item>
+    </style>
+
+
+    <style name="MealPriceStyle">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/text_size_16</item>
+    </style>
+
+</resources>

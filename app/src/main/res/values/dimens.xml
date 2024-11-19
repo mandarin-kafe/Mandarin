@@ -1,4 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="head_toolbar_height_56">56dp</dimen>
+    <dimen name="search_input_size_40">40dp</dimen>
+    <dimen name="standart_margin_16">16dp</dimen>
+    <dimen name="small_margin_8">8dp</dimen>
+    <dimen name="search_field_radius_8">8dp</dimen>
+    <dimen name="regular_text_size_16">16sp</dimen>
+    <dimen name="dr_cursor_wight_2">2dp</dimen>
+    <dimen name="supersmall_margin_size_4">4dp</dimen>
+    <dimen name="search_image_size_92">92dp</dimen>
+    <dimen name="small_text_size_11">11sp</dimen>
+    <dimen name="text_size_16">16sp</dimen>
+    <dimen name="guideline_4">4dp</dimen>
+    <dimen name="small_button_24">24dp</dimen>
+    <dimen name="image_corner_radius_2">2dp</dimen>
 </resources>
