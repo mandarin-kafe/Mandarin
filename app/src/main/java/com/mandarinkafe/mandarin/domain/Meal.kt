@@ -1,17 +1,18 @@
 package com.mandarinkafe.mandarin.domain
 
 data class Meal(
-    val id: String,               // Уникальный идентификатор блюда
-    val name: String,             // Название блюда
+    val id: String,                // Уникальный идентификатор блюда
+    val name: String,              // Название блюда
     val description: String?,      // Описание блюда
     val weight: Int?,              // Вес блюда в граммах
-    val price: Int,            // Цена блюда
-    val imageUrl: String,         // Ссылка на изображение блюда
-    val category: String,         // Категория блюда
-    val isVegetarian: Boolean,    // Флаг: является ли блюдо вегетарианским
+    val price: Int,                // Цена блюда
+    val imageUrl: String,          // Ссылка на изображение блюда
+    val category: String,          // Категория блюда
+    val isVegetarian: Boolean,     // Флаг: является ли блюдо вегетарианским
 )
 
-var mockMealkList = arrayListOf(
+
+var mockMealkList = arrayListOf<Meal>(
     Meal(
         "1",
         "МАРГАРИТА",
@@ -111,5 +112,6 @@ var mockMealkList = arrayListOf(
         "https://optim.tildacdn.com/tild3935-3437-4462-b535-646633393239/-/resize/312x/-/format/webp/mandarin_veg.jpg",
         "sushi",
         true
+
     )
 )
