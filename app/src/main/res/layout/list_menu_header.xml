@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tv_category_title"
@@ -13,6 +12,6 @@
     android:padding="@dimen/standart_margin_16"
     android:textSize="@dimen/big_text_24"
     android:textStyle="bold"
-    tools:text="МАРГАРИТА" />
+    tools:text="ПИЦЦА" />
 
 

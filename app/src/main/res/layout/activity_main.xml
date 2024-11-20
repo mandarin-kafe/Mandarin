@@ -15,7 +15,7 @@
         android:paddingHorizontal="@dimen/standart_margin_16">
 
         <ImageButton
-            android:id="@+id/btn_left"
+            android:id="@+id/bt_open_menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackgroundBorderless"
@@ -37,8 +37,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/iv_something_in_cart"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_marginEnd="1dp"
+            android:background="@drawable/shape_round"
+            app:layout_constraintEnd_toEndOf="@+id/bt_cart"
+            app:layout_constraintTop_toTopOf="@+id/bt_cart" />
+
         <ImageButton
-            android:id="@+id/btn_right"
+            android:id="@+id/bt_cart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackgroundBorderless"
@@ -48,6 +57,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:tint="@android:color/white" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

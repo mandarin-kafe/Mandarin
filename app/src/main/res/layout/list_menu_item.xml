@@ -62,10 +62,11 @@
         android:layout_width="120dp"
         android:layout_height="42dp"
         android:backgroundTint="@android:color/transparent"
+        android:text="1"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/iv_meal_picture"
-        android:text="1" />
+
+        app:layout_constraintStart_toEndOf="@id/iv_meal_picture" />
 
     <!-- Кнопка добавления в корзину -->
     <com.google.android.material.button.MaterialButton
@@ -77,7 +78,8 @@
         app:icon="@drawable/ic_cart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/iv_meal_picture"
-        tools:text="985 р." />
+        tools:text="985 р."
+        />
 
 
     <!-- Кнопка уменьшения количества -->
@@ -85,11 +87,12 @@
         android:id="@+id/bt_cart_minus"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:background="@drawable/shape_round_button"
+        android:background="@drawable/shape_round"
         android:gravity="center"
         android:text="@string/minus"
         android:textColor="@android:color/white"
         android:textSize="16sp"
+        android:textStyle="bold"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/bt_number_in_cart"
         app:layout_constraintStart_toStartOf="@id/bt_number_in_cart"
@@ -101,11 +104,12 @@
         android:id="@+id/bt_cart_plus"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:background="@drawable/shape_round_button"
+        android:background="@drawable/shape_round"
         android:gravity="center"
         android:text="@string/plus"
         android:textColor="@android:color/white"
         android:textSize="16sp"
+        android:textStyle="bold"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/bt_number_in_cart"
         app:layout_constraintEnd_toEndOf="@id/bt_number_in_cart"
