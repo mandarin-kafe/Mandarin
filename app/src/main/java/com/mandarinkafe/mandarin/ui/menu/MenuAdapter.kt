@@ -15,7 +15,6 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.databinding.ListMenuItemBinding
 import com.mandarinkafe.mandarin.domain.models.Meal
-
 import com.mandarinkafe.mandarin.domain.models.MenuItem
 
 

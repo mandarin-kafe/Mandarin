@@ -12,7 +12,7 @@
         android:id="@+id/head_toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/head_toolbar_height_56"
-        android:paddingHorizontal="@dimen/standart_margin_16">
+        android:paddingHorizontal="@dimen/small_margin_8">
 
         <ImageButton
             android:id="@+id/bt_open_menu"
