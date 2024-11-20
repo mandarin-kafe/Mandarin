@@ -12,7 +12,7 @@ data class Meal(
     val isFavorite: Boolean,     // Флаг: есть ли блюдо в списка избранных (инфо из Shared Prefs)
 )
 
-
+//ff
 var mockPizzaList = arrayListOf<Meal>(
     Meal(
         "1",
