@@ -57,10 +57,9 @@ class MenuAdapter(
             is MenuItem.Header -> (holder as HeaderViewHolder).bind(item)
             is MenuItem.MealItem -> {
                 (holder as MealViewHolder).bind(item.meal)
-                // TODO в теории установку лисенеров можно вынести из Холдера сюда, тогда можно будет использовать clickDebounce,
+                // TODO Установку OnClickListener можно вынести из Холдера сюда, тогда можно будет использовать clickDebounce,
                 // ну и не придётся передавать в Холдер обьект clickListener.
-                // Зато придётся сюда тащить, как минимум, значение переменной numberInCart - оно же индивидуальное для каждого блюда.
-                // Не знаю, как лучше.
+
             }
         }
     }
@@ -97,7 +96,9 @@ class MenuAdapter(
     ) :
         RecyclerView.ViewHolder(parentView) {
         private val binding = ListMenuItemBinding.bind(parentView)
-        private var numberInCart = 0
+        private var numberInCart = 0 // TODO временная переменная!
+        // Потом брать эту цифру из логики корзины, а то Холдер одну и ту же переменную привязывает к разным товарам
+
         private val cornerRadius =
             this@MealViewHolder.parentView.resources.getDimensionPixelSize(R.dimen.image_corner_radius_2)
 
@@ -133,6 +134,7 @@ class MenuAdapter(
         }
 
         private fun setOnClickListeners(meal: Meal) = with(binding) {
+
             ivAddToFavorite.setOnClickListener { clickListener.onFavoriteToggleClick(meal) }
 
             btAddToCartPrice.setOnClickListener {
