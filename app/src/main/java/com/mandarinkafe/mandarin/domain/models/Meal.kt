@@ -223,7 +223,38 @@ var mockBurgerList = arrayListOf<Meal>(
                 "✓ помидоры\n" +
                 "✓ соус сальса\n" +
                 "✓ соус максибургер",
-        null,
+        300,
+        425,
+        "https://optim.tildacdn.com/tild6631-3532-4535-b334-666436313734/-/resize/312x/-/format/webp/_-2.jpg",
+        "burger",
+        true,
+        false
+    ),
+    Meal(
+        "32",
+        "ХАМБУРГЕР",
+        "✓ булка\n" +
+                "✓ говяжья котлета\n" +
+                "✓ сыр чеддер\n" +
+                "✓ соус микс барбекю",
+        299,
+        455,
+        "https://optim.tildacdn.com/tild6337-3237-4264-a535-333266346235/-/resize/312x/-/format/webp/_-2.jpg",
+        "burger",
+        false,
+        false
+    ),
+    Meal(
+        "33",
+        "ДЗЕН",
+        "✓ котлета из нута\n" +
+                "✓ сыр чеддер\n" +
+                "✓ айсберг\n" +
+                "✓ красный лук\n" +
+                "✓ помидоры\n" +
+                "✓ соус сальса\n" +
+                "✓ соус максибургер",
+        300,
         425,
         "https://optim.tildacdn.com/tild6631-3532-4535-b334-666436313734/-/resize/312x/-/format/webp/_-2.jpg",
         "burger",

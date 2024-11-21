@@ -3,13 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingHorizontal="@dimen/small_margin_8"
     tools:context=".ui.menu.MenuFragment">
 
     <LinearLayout
         android:id="@+id/ll_search_container"
         android:layout_width="match_parent"
         android:layout_height="@dimen/search_input_size_40"
-        android:layout_margin="@dimen/small_margin_8"
+
         android:background="@drawable/shape_rectangle_with_radius_8"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -62,8 +63,7 @@
         android:id="@+id/iv_banner"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/small_margin_8"
-        android:layout_marginVertical="@dimen/standart_margin_16"
+        android:layout_marginVertical="@dimen/small_margin_8"
         android:adjustViewBounds="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -74,7 +74,6 @@
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/standart_margin_16"
         android:background="@android:color/transparent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -83,10 +82,24 @@
         app:tabIndicatorColor="?attr/colorOnPrimary"
         app:tabIndicatorFullWidth="true"
         app:tabIndicatorHeight="@dimen/dr_cursor_wight_1"
+        android:layout_marginVertical="@dimen/small_margin_8"
         app:tabMode="scrollable"
         app:tabRippleColor="@android:color/transparent"
         app:tabSelectedTextColor="?attr/colorOnPrimary"
         app:tabTextColor="?attr/colorOnPrimary" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_menu"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tabLayout"
+        tools:listitem="@layout/list_menu_item" />
+
 
     <ProgressBar
         android:id="@+id/search_progressBar"
@@ -112,18 +125,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_menu"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginHorizontal="@dimen/small_margin_8"
-        android:layout_marginTop="@dimen/small_margin_8"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tabLayout"
-        tools:listitem="@layout/list_menu_item" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

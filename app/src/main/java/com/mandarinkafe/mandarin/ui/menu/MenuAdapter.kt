@@ -23,7 +23,6 @@ class MenuAdapter(
     private val clickListener: MealClickListener
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
 
@@ -58,12 +57,18 @@ class MenuAdapter(
             is MenuItem.Header -> (holder as HeaderViewHolder).bind(item)
             is MenuItem.MealItem -> {
                 (holder as MealViewHolder).bind(item.meal)
+                // TODO в теории установку лисенеров можно вынести из Холдера сюда, тогда можно будет использовать clickDebounce,
+                // ну и не придётся передавать в Холдер обьект clickListener.
+                // Зато придётся сюда тащить, как минимум, значение переменной numberInCart - оно же индивидуальное для каждого блюда.
+                // Не знаю, как лучше.
             }
         }
     }
 
-    override fun getItemCount(): Int {
-        return items.size
+    private fun onMealClickListener(meal: Meal) {
+        if (clickDebounce()) {
+            clickListener.onMealClick(meal)
+        }
     }
 
     private fun clickDebounce(): Boolean {
@@ -75,20 +80,16 @@ class MenuAdapter(
         return current
     }
 
-    private fun onMealClickListener(meal: Meal) {
-        if (clickDebounce()) {
-            clickListener.onMealClick(meal)
-        }
+    override fun getItemCount(): Int {
+        return items.size
     }
 
     class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val headerTextView: TextView = itemView.findViewById(R.id.tv_category_title)
-
         fun bind(header: MenuItem.Header) {
             headerTextView.text = header.categoryName
         }
     }
-
 
     class MealViewHolder(
         private val parentView: View,
@@ -96,24 +97,29 @@ class MenuAdapter(
     ) :
         RecyclerView.ViewHolder(parentView) {
         private val binding = ListMenuItemBinding.bind(parentView)
+        private var numberInCart = 0
+        private val cornerRadius =
+            this@MealViewHolder.parentView.resources.getDimensionPixelSize(R.dimen.image_corner_radius_2)
 
-        fun bind(meal: Meal) = with(binding) {
-            val cornerRadius =
-                this@MealViewHolder.parentView.resources.getDimensionPixelSize(R.dimen.image_corner_radius_2)
+        fun bind(meal: Meal) {
+            setMealData(meal)
+            setOnClickListeners(meal)
+        }
+
+        private fun setMealData(meal: Meal) = with(binding) {
             tvMealTitle.text = meal.name
-
             if (meal.description.isNullOrEmpty()) {
                 tvMealIngredients.isVisible = false
             } else {
+                tvMealIngredients.isVisible = true
                 tvMealIngredients.text = meal.description
             }
-
             if (meal.weight == null) {
                 tvMealWeight.isVisible = false
             } else {
+                tvMealWeight.isVisible = true
                 tvMealWeight.text = meal.weight.toString() + " г"
             }
-
             btAddToCartPrice.text = meal.price.toString() + " ₽"
 
             Glide.with(parentView)
@@ -124,16 +130,33 @@ class MenuAdapter(
                 .into(ivMealPicture)
             tvMealIngredients.requestLayout()
             ivAddToFavorite.setImageDrawable(getFavoriteDrawable(meal.isFavorite))
+        }
 
-
-            itemView.setOnClickListener { clickListener.onMealClick(meal) }
+        private fun setOnClickListeners(meal: Meal) = with(binding) {
             ivAddToFavorite.setOnClickListener { clickListener.onFavoriteToggleClick(meal) }
+
             btAddToCartPrice.setOnClickListener {
                 clickListener.onAddToCartClick(meal)
+                tvNumberInCart.text = (++numberInCart).toString() + " шт"
+                tvTotalPriceInCart.text = (meal.price * numberInCart).toString() + " ₽"
+
                 extraCartButtonsManager(VisibilityStatus.VISIBLE)
             }
-            btCartMinus.setOnClickListener { clickListener.minusToCartClick(meal) }
-            btCartPlus.setOnClickListener { clickListener.plusToCartClick(meal) }
+
+            btCartMinus.setOnClickListener {
+                clickListener.minusToCartClick(meal)
+                tvNumberInCart.text = (--numberInCart).toString() + " шт"
+                tvTotalPriceInCart.text = (meal.price * numberInCart).toString() + " ₽"
+                if (numberInCart == 0) {
+                    extraCartButtonsManager(VisibilityStatus.HIDDEN)
+                }
+            }
+            btCartPlus.setOnClickListener {
+                clickListener.plusToCartClick(meal)
+                tvNumberInCart.text = (++numberInCart).toString() + " шт"
+                tvTotalPriceInCart.text = (meal.price * numberInCart).toString() + " ₽"
+                numberInCart++
+            }
         }
 
         @SuppressLint("UseCompatLoadingForDrawables")
@@ -149,12 +172,16 @@ class MenuAdapter(
                     btAddToCartPrice.visibility = View.GONE
                     btCartMinus.visibility = View.VISIBLE
                     btCartPlus.visibility = View.VISIBLE
+                    tvNumberInCart.visibility = View.VISIBLE
+                    tvTotalPriceInCart.visibility = View.VISIBLE
                 }
 
                 VisibilityStatus.HIDDEN -> binding.apply {
                     btAddToCartPrice.visibility = View.VISIBLE
                     btCartMinus.visibility = View.GONE
                     btCartPlus.visibility = View.GONE
+                    tvNumberInCart.visibility = View.GONE
+                    tvTotalPriceInCart.visibility = View.GONE
                 }
             }
 
