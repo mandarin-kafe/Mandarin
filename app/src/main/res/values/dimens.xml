@@ -17,6 +17,6 @@
     <dimen name="meal_image_120">120dp</dimen>
     <dimen name="big_text_24">24sp</dimen>
     <dimen name="dr_cursor_wight_1">1dp</dimen>
-    <dimen name="button_radius_16">16dp</dimen>
+    <dimen name="button_radius_8">8dp</dimen>
     <dimen name="recycler_view_offset">1dp</dimen>
 </resources>

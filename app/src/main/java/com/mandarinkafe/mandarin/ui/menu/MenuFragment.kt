@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,14 +26,13 @@ import com.mandarinkafe.mandarin.ui.menu.MenuViewModel.MenuScreenState
 class MenuFragment : Fragment() {
 
     private lateinit var binding: FragmentMenuBinding
-    private lateinit var menuAdapter: MenuAdapter
     private lateinit var tabLayout: TabLayout
-    private lateinit var recyclerView: RecyclerView
+    private val recyclerView: RecyclerView by lazy { binding.rvMenu }
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
     private val viewModel: MenuViewModel by viewModels()
-    private lateinit var menuItems: MutableList<MenuItem>
-    private lateinit var menuCategories: ArrayList<MenuCategory>
+    private var menuItems = mutableListOf<MenuItem>()
+    private var menuCategories = arrayListOf<MenuCategory>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,11 +40,10 @@ class MenuFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMenuBinding.inflate(inflater, container, false)
-        recyclerView = binding.rvMenu
+
         tabLayout = binding.tabLayout
 
         menuCategories = mockMenuData // TODO убрать это!!!
-        menuItems = mutableListOf<MenuItem>()
 
         menuCategories.forEach { category ->
             menuItems.add(MenuItem.Header(category.name))
@@ -56,15 +55,14 @@ class MenuFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         viewModel.prepareMenuItems()
-
         viewModel.getMenuState().observe(viewLifecycleOwner)
         { state ->
             renderMenuScreen(state)
         }
         setupScrollSync()
         setupTabs()
+
     }
 
     private fun setupTabs() {
@@ -93,7 +91,6 @@ class MenuFragment : Fragment() {
             layoutManager.scrollToPositionWithOffset(headerPosition, offset)
         }
     }
-
 
     private fun setupScrollSync() {
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -128,7 +125,7 @@ class MenuFragment : Fragment() {
                 progressBarManager(VisibilityStatus.VISIBLE)
             }
 
-            MenuScreenState.NetworkError -> {
+            is MenuScreenState.NetworkError -> {
                 placeholderManager(VisibilityStatus.VISIBLE)
 
             }
@@ -144,8 +141,8 @@ class MenuFragment : Fragment() {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun setRvAdapter() {
-        menuAdapter = MenuAdapter(menuItems,
+    private fun setRvAdapter(): MenuAdapter {
+        val menuAdapter = MenuAdapter(menuItems,
             object : MenuAdapter.MealClickListener {
                 override fun onMealClick(meal: Meal) {
                     if (clickDebounce()) {
@@ -198,6 +195,7 @@ class MenuFragment : Fragment() {
             adapter = menuAdapter
         }
         menuAdapter.notifyDataSetChanged()
+        return menuAdapter
     }
 
 
