@@ -2,12 +2,12 @@ package com.mandarinkafe.mandarin.domain.models
 
 data class Meal(
     val id: String,                // Уникальный идентификатор блюда
-    val name: String,              // Название блюда
-    val description: String?,      // Описание блюда
-    val weight: Int?,              // Вес блюда в граммах
-    val price: Int,                // Цена блюда
+    val name: String,              // Название
+    val description: String?,      // Описание
+    val weight: Int?,              // Вес в граммах
+    val price: Int,                // Цена
     val imageUrl: String,          // Ссылка на изображение блюда
-    val category: String,          // Категория блюда
+    val category: String,          // Категория блюда. !Возможно, не понадобится это поле.
     val isVegetarian: Boolean,     // Флаг: является ли блюдо вегетарианским
     val isFavorite: Boolean,     // Флаг: есть ли блюдо в списка избранных (инфо из Shared Prefs)
 )
