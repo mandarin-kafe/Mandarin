@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
@@ -21,18 +22,37 @@ import com.mandarinkafe.mandarin.domain.models.Meal
 import com.mandarinkafe.mandarin.domain.models.MenuCategory
 import com.mandarinkafe.mandarin.domain.models.MenuItem
 import com.mandarinkafe.mandarin.domain.models.mockMenuData
+import com.mandarinkafe.mandarin.ui.meal_details.MealDetailsFragment
 import com.mandarinkafe.mandarin.ui.menu.MenuViewModel.MenuScreenState
 
 class MenuFragment : Fragment() {
 
     private lateinit var binding: FragmentMenuBinding
-    private lateinit var tabLayout: TabLayout
+    private val tabLayoutMain: TabLayout by lazy { binding.tabLayoutCategories }
+    private val tabLayoutSub: TabLayout by lazy { binding.tabLayoutSubCategories }
     private val recyclerView: RecyclerView by lazy { binding.rvMenu }
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
     private val viewModel: MenuViewModel by viewModels()
     private var menuItems = mutableListOf<MenuItem>()
     private var menuCategories = arrayListOf<MenuCategory>()
+    private var menuSubCategoriesPizza = arrayListOf<String>(
+        "Классическая",
+        "Римская",
+        "Неаполитано",
+        "Чикаго",
+        "Кальцоне",
+        "Фокачча"
+    )
+    private var menuSubCategoriesSushi = arrayListOf<String>(
+        "Роллы",
+        "Маки-суши",
+        "Нигири",
+        "Гунканы",
+        "Спайси",
+        "Запеченные роллы",
+        "Горячие роллы", "Онигири", "Сеты"
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,14 +61,13 @@ class MenuFragment : Fragment() {
     ): View {
         binding = FragmentMenuBinding.inflate(inflater, container, false)
 
-        tabLayout = binding.tabLayout
-
-        menuCategories = mockMenuData // TODO убрать это!!!
+        menuCategories =
+            mockMenuData // TODO убрать это!!! Обработка данных должна быть в дата слое.
 
         menuCategories.forEach { category ->
             menuItems.add(MenuItem.Header(category.name))
             menuItems.addAll(category.items.map { MenuItem.MealItem(it) })
-            // TODO убрать это!!!
+            // TODO убрать это!!! Обработка данных должна быть в дата слое.
         }
         return binding.root
     }
@@ -57,28 +76,126 @@ class MenuFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel.prepareMenuItems()
         viewModel.getMenuState().observe(viewLifecycleOwner)
-        { state ->
-            renderMenuScreen(state)
-        }
+        { state -> renderMenuScreen(state) }
         setupScrollSync()
         setupTabs()
-
     }
+
+    private var isTabSyncing = false
 
     private fun setupTabs() {
         menuCategories.forEach { category ->
-            tabLayout.addTab(tabLayout.newTab().setText(category.name))
+            val tab = tabLayoutMain.newTab().setText(category.name)
+            when (category.name) {
+                "ПИЦЦА" -> tab.setIcon(R.drawable.pizza)
+                "СУШИ И РОЛЛЫ" -> tab.setIcon(R.drawable.sushi)
+                "БУРГЕРЫ" -> tab.setIcon(R.drawable.burger)
+                "ХОТ-ДОГИ И ДОНЕР" -> tab.setIcon(R.drawable.hotdog)
+                "WOK" -> tab.setIcon(R.drawable.wok)
+            }
+            tabLayoutMain.addTab(tab)
         }
 
-        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        tabLayoutMain.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
+                if (isTabSyncing) return
                 val position = tab?.position ?: 0
-                scrollToCategory(position)
+                if (tab != null) {
+                    subTabsManager(tab.text.toString())
+                    scrollToCategory(position)
+                }
             }
 
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                tabLayoutSub.removeAllTabs()
+            }
+
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
+    }
+
+
+    private fun setupScrollSync() {
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (isTabSyncing) return // Игнорируем вызовы, если синхронизация уже идёт
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+
+                val firstVisiblePosition = layoutManager.findFirstCompletelyVisibleItemPosition()
+                val lastVisiblePosition = layoutManager.findLastCompletelyVisibleItemPosition()
+
+                if (firstVisiblePosition != RecyclerView.NO_POSITION) {
+                    for (position in firstVisiblePosition..lastVisiblePosition) {
+                        val item = menuItems[position]
+                        val categoryName = when (item) {
+                            is MenuItem.Header -> item.categoryName
+                            is MenuItem.MealItem -> {
+                                menuCategories.find { category -> category.items.contains(item.meal) }?.name
+                            }
+
+                            else -> null
+                        }
+
+                        if (categoryName != null) {
+                            val headerIndex =
+                                menuCategories.indexOfFirst { it.name == categoryName }
+                            if (headerIndex != -1 && headerIndex != tabLayoutMain.selectedTabPosition) {
+                                isTabSyncing = true
+                                val tab = tabLayoutMain.getTabAt(headerIndex)
+                                tab?.select() // Вызываем addOnTabSelectedListener
+                                isTabSyncing = false
+                            }
+                            break
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    private fun subTabsManager(category: String) {
+        //временный метод для проверки вёрстки. Нужно будет сделать нормальный,
+        // когда поймём структуру их фида и как вытащить субкатегории и родительскую категорию.
+
+        when ((category.lowercase())) {
+            "pizza", "пицца" -> {
+                Log.d("DEBUG", "вызываю setSubTabs для пиццы")
+                setSubTabs(menuSubCategoriesPizza)
+            }
+
+            "sushi", "суши и роллы" -> {
+                Log.d("DEBUG", "вызываю setSubTabs для суши")
+                setSubTabs(menuSubCategoriesSushi)
+            }
+
+            else -> tabLayoutSub.isVisible = false
+        }
+    }
+
+    private fun setSubTabs(subCategories: ArrayList<String>) {
+        tabLayoutSub.removeAllTabs()
+
+        if (subCategories.isEmpty()) {
+            Log.e("DEBUG", "Список подкатегорий пуст!")
+            return
+        }
+        subCategories.forEach { subCategory ->
+            tabLayoutSub.addTab(tabLayoutSub.newTab().setText(subCategory))
+        }
+        tabLayoutSub.isVisible = subCategories.isNotEmpty()
+
+        // Проверяем слушатели, чтобы они не добавлялись повторно
+        if (tabLayoutSub.tabCount > 0 && tabLayoutSub.getTabAt(0)?.tag == null) {
+            tabLayoutSub.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                override fun onTabSelected(tab: TabLayout.Tab?) {
+                    // TODO Логика выбора подкатегории
+                }
+
+                override fun onTabUnselected(tab: TabLayout.Tab?) {}
+                override fun onTabReselected(tab: TabLayout.Tab?) {}
+            })
+        }
     }
 
     private fun scrollToCategory(position: Int) {
@@ -87,37 +204,17 @@ class MenuFragment : Fragment() {
         }
         if (headerPosition != -1) {
             val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-            val offset = resources.getDimensionPixelSize(R.dimen.recycler_view_offset)
+            val offset = resources.getDimensionPixelSize(R.dimen.recycler_view_offset_1)
             layoutManager.scrollToPositionWithOffset(headerPosition, offset)
         }
     }
 
-    private fun setupScrollSync() {
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
-
-                if (firstVisiblePosition != RecyclerView.NO_POSITION) {
-                    val firstVisibleItem = menuItems[firstVisiblePosition]
-                    if (firstVisibleItem is MenuItem.Header) {
-                        val headerIndex =
-                            menuCategories.indexOfFirst { it.name == firstVisibleItem.categoryName }
-                        if (headerIndex != -1 && headerIndex != tabLayout.selectedTabPosition) {
-                            tabLayout.setScrollPosition(headerIndex, 0f, true)
-                        }
-                    }
-                }
-            }
-        })
-    }
-
-
     private fun showMealDetails(meal: Meal) {
-        //TODO запуск фрагмента MealDetailsFragment
+        findNavController().navigate(
+            R.id.action_menuFragment_to_mealDetails,
+            MealDetailsFragment.createArgs(meal)
+        )
     }
-
 
     private fun renderMenuScreen(state: MenuScreenState) {
         when (state) {
@@ -146,13 +243,22 @@ class MenuFragment : Fragment() {
             object : MenuAdapter.MealClickListener {
                 override fun onMealClick(meal: Meal) {
                     if (clickDebounce()) {
-                        showMealDetails(meal)
+                        if (meal.category == "pizza") showMealDetails(meal)
                         Toast.makeText(
                             requireContext(),
                             "Тык на любую область блюда: ${meal.name}",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
+                }
+
+                override fun onEditClick(meal: Meal) {
+                    showMealDetails(meal)
+                    Toast.makeText(
+                        requireContext(),
+                        "Тык на кнопку редактирования: ${meal.name}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
 
                 override fun onFavoriteToggleClick(meal: Meal) {
@@ -201,31 +307,31 @@ class MenuFragment : Fragment() {
 
     private fun progressBarManager(status: VisibilityStatus) {
         binding.apply {
-            when (status) {
-                VisibilityStatus.VISIBLE -> {
-                    searchProgressBar.isVisible = true
-                    placeholderManager(VisibilityStatus.HIDDEN)
-                }
-
-                VisibilityStatus.HIDDEN -> {
-                    searchProgressBar.isVisible = false
-                }
-            }
+//            when (status) {
+//                VisibilityStatus.VISIBLE -> {
+//                    searchProgressBar.isVisible = true
+//                    placeholderManager(VisibilityStatus.HIDDEN)
+//                }
+//
+//                VisibilityStatus.HIDDEN -> {
+//                    searchProgressBar.isVisible = false
+//                }
+//            }
         }
     }
 
     private fun placeholderManager(status: VisibilityStatus) {
         binding.apply {
-            when (status) {
-                VisibilityStatus.VISIBLE -> {
-                    tvPlaceholderMessage.isVisible = true
-                    progressBarManager(VisibilityStatus.HIDDEN)
-                }
-
-                VisibilityStatus.HIDDEN -> {
-                    tvPlaceholderMessage.isVisible = false
-                }
-            }
+//            when (status) {
+//                VisibilityStatus.VISIBLE -> {
+//                    tvPlaceholderMessage.isVisible = true
+//                    progressBarManager(VisibilityStatus.HIDDEN)
+//                }
+//
+//                VisibilityStatus.HIDDEN -> {
+//                    tvPlaceholderMessage.isVisible = false
+//                }
+//            }
         }
     }
 

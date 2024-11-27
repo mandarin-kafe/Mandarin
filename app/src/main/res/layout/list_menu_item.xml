@@ -10,11 +10,12 @@
         android:id="@+id/iv_meal_picture"
         android:layout_width="@dimen/meal_image_120"
         android:layout_height="@dimen/meal_image_120"
+        android:background="@color/grey_transparent_10"
         android:contentDescription="@null"
-        android:paddingEnd="@dimen/small_margin_8"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
+
 
     <!-- Заголовок -->
     <TextView
@@ -22,6 +23,7 @@
         style="@style/MealTitleStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/small_margin_8"
         android:ellipsize="end"
         android:maxLines="1"
         android:textSize="@dimen/regular_text_size_16"
@@ -40,7 +42,7 @@
         android:maxLines="3"
         app:layout_constraintBottom_toTopOf="@id/tv_meal_weight"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/iv_meal_picture"
+        app:layout_constraintStart_toStartOf="@id/tv_meal_title"
         app:layout_constraintTop_toBottomOf="@id/tv_meal_title"
         tools:text="Моцарелла, сливочно-чесночный соус, шампиньоны, вяленые томаты, сливочно-чесночный соус, шампиньоны, вяленые томаты, сливочно-чесночный соус, шампиньоны, вяленые томаты" />
 
@@ -53,7 +55,7 @@
         android:ellipsize="end"
         app:layout_constraintBottom_toTopOf="@id/background_for_cart_info"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/iv_meal_picture"
+        app:layout_constraintStart_toStartOf="@id/tv_meal_title"
         tools:text="670г" />
 
 
@@ -66,7 +68,7 @@
         android:clickable="false"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/iv_meal_picture" />
+        app:layout_constraintStart_toStartOf="@id/tv_meal_title" />
 
     <!-- Кнопка добавления в корзину -->
     <com.google.android.material.button.MaterialButton
@@ -76,8 +78,9 @@
         android:layout_height="42dp"
         android:gravity="center"
         app:icon="@drawable/ic_cart"
+        app:iconTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/iv_meal_picture"
+        app:layout_constraintStart_toStartOf="@id/tv_meal_title"
         tools:text="985 ₽" />
 
     <TextView
@@ -105,9 +108,9 @@
         style="@style/CartButtonSmallTextStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:maxLines="1"
         android:textColor="#BEFFFFFF"
         android:visibility="gone"
-        android:maxLines="1"
         app:layout_constraintEnd_toStartOf="@id/bt_cart_plus"
         app:layout_constraintStart_toEndOf="@id/bt_cart_minus"
         app:layout_constraintTop_toTopOf="@id/cntr_of_background_bt"
@@ -145,9 +148,9 @@
         app:layout_constraintEnd_toEndOf="@id/background_for_cart_info"
         app:layout_constraintTop_toTopOf="@id/background_for_cart_info" />
 
-    <!-- Добавить в избранное -->
+
     <ImageView
-        android:id="@+id/iv_add_to_favorite"
+        android:id="@+id/iv_edit_meal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/small_margin_8"
@@ -155,7 +158,18 @@
         app:layout_constraintBottom_toBottomOf="@id/background_for_cart_info"
         app:layout_constraintStart_toEndOf="@id/background_for_cart_info"
         app:layout_constraintTop_toTopOf="@id/background_for_cart_info"
+        app:srcCompat="@drawable/ic_edit_24" />
+    <!-- Добавить в избранное -->
 
+    <ImageView
+        android:id="@+id/iv_add_to_favorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/small_margin_8"
+        android:contentDescription="@string/add_to_favorite"
+        app:layout_constraintBottom_toBottomOf="@id/background_for_cart_info"
+        app:layout_constraintStart_toEndOf="@id/iv_edit_meal"
+        app:layout_constraintTop_toTopOf="@id/background_for_cart_info"
         app:srcCompat="@drawable/ic_favorite_inactive" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

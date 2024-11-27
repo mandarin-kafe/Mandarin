@@ -18,5 +18,7 @@
     <dimen name="big_text_24">24sp</dimen>
     <dimen name="dr_cursor_wight_1">1dp</dimen>
     <dimen name="button_radius_8">8dp</dimen>
-    <dimen name="recycler_view_offset">1dp</dimen>
+    <dimen name="recycler_view_offset_1">1dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
+    <dimen name="small_meal_image_96">96dp</dimen>
 </resources>

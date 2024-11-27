@@ -9,5 +9,14 @@
         android:id="@+id/menuFragment"
         android:name="com.mandarinkafe.mandarin.ui.menu.MenuFragment"
         android:label="fragment_menu"
-        tools:layout="@layout/fragment_menu" />
+        tools:layout="@layout/fragment_menu" >
+        <action
+            android:id="@+id/action_menuFragment_to_mealDetails"
+            app:destination="@id/mealDetails" />
+    </fragment>
+    <fragment
+        android:id="@+id/mealDetails"
+        android:name="com.mandarinkafe.mandarin.ui.meal_details.MealDetailsFragment"
+        android:label="fragment_meal_details"
+        tools:layout="@layout/fragment_meal_details" />
 </navigation>

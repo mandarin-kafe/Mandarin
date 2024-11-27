@@ -96,7 +96,7 @@ class MenuAdapter(
     ) :
         RecyclerView.ViewHolder(parentView) {
         private val binding = ListMenuItemBinding.bind(parentView)
-        private var numberInCart = 0 // TODO временная переменная!
+        private var numberInCart = 0 // TODO временная переменная! брать цифру из логики корзины
         // Потом брать эту цифру из логики корзины, а то Холдер одну и ту же переменную привязывает к разным товарам
 
         private val cornerRadius =
@@ -105,6 +105,7 @@ class MenuAdapter(
         fun bind(meal: Meal) {
             setMealData(meal)
             setOnClickListeners(meal)
+            if (meal.category != "pizza") {binding.ivEditMeal.isVisible = false} else {binding.ivEditMeal.isVisible = true}
         }
 
         private fun setMealData(meal: Meal) = with(binding) {
@@ -134,15 +135,18 @@ class MenuAdapter(
         }
 
         private fun setOnClickListeners(meal: Meal) = with(binding) {
-
-            ivAddToFavorite.setOnClickListener { clickListener.onFavoriteToggleClick(meal) }
-
+            parentView.setOnClickListener { clickListener.onMealClick(meal)}
+            ivAddToFavorite .setOnClickListener {
+                clickListener.onFavoriteToggleClick(
+                    meal
+                )
+            }
+            ivEditMeal.setOnClickListener { clickListener.onEditClick(meal) }
             btAddToCartPrice.setOnClickListener {
                 clickListener.onAddToCartClick(meal)
                 tvNumberInCart.text = (++numberInCart).toString() + " шт"
                 tvTotalPriceInCart.text = (meal.price * numberInCart).toString() + " ₽"
-
-                extraCartButtonsManager(VisibilityStatus.VISIBLE)
+                extraCartButtonsManager(inCart = true)
             }
 
             btCartMinus.setOnClickListener {
@@ -150,14 +154,13 @@ class MenuAdapter(
                 tvNumberInCart.text = (--numberInCart).toString() + " шт"
                 tvTotalPriceInCart.text = (meal.price * numberInCart).toString() + " ₽"
                 if (numberInCart == 0) {
-                    extraCartButtonsManager(VisibilityStatus.HIDDEN)
+                    extraCartButtonsManager(inCart = false)
                 }
             }
             btCartPlus.setOnClickListener {
                 clickListener.plusToCartClick(meal)
                 tvNumberInCart.text = (++numberInCart).toString() + " шт"
                 tvTotalPriceInCart.text = (meal.price * numberInCart).toString() + " ₽"
-                numberInCart++
             }
         }
 
@@ -168,9 +171,9 @@ class MenuAdapter(
             )
         }
 
-        private fun extraCartButtonsManager(status: VisibilityStatus) {
-            when (status) {
-                VisibilityStatus.VISIBLE -> binding.apply {
+        private fun extraCartButtonsManager(inCart: Boolean) {
+            when (inCart) {
+                true -> binding.apply {
                     btAddToCartPrice.visibility = View.GONE
                     btCartMinus.visibility = View.VISIBLE
                     btCartPlus.visibility = View.VISIBLE
@@ -178,7 +181,7 @@ class MenuAdapter(
                     tvTotalPriceInCart.visibility = View.VISIBLE
                 }
 
-                VisibilityStatus.HIDDEN -> binding.apply {
+                false -> binding.apply {
                     btAddToCartPrice.visibility = View.VISIBLE
                     btCartMinus.visibility = View.GONE
                     btCartPlus.visibility = View.GONE
@@ -186,8 +189,6 @@ class MenuAdapter(
                     tvTotalPriceInCart.visibility = View.GONE
                 }
             }
-
-
         }
     }
 
@@ -195,8 +196,10 @@ class MenuAdapter(
         fun onMealClick(meal: Meal)
         fun onFavoriteToggleClick(meal: Meal)
         fun onAddToCartClick(meal: Meal)
+        fun onEditClick(meal: Meal)
         fun plusToCartClick(meal: Meal)
         fun minusToCartClick(meal: Meal)
+
     }
 
     private companion object {
@@ -204,10 +207,5 @@ class MenuAdapter(
         const val VIEW_TYPE_HEADER = 0
         const val VIEW_TYPE_MEAL = 1
 
-        enum class VisibilityStatus {
-            VISIBLE,
-            HIDDEN
-        }
     }
-
 }
