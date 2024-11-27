@@ -197,7 +197,6 @@ class MenuFragment : Fragment() {
             })
         }
     }
-
     private fun scrollToCategory(position: Int) {
         val headerPosition = menuItems.indexOfFirst {
             it is MenuItem.Header && it.categoryName == menuCategories[position].name
