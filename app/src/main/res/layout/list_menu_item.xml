@@ -158,7 +158,7 @@
         app:layout_constraintBottom_toBottomOf="@id/background_for_cart_info"
         app:layout_constraintStart_toEndOf="@id/background_for_cart_info"
         app:layout_constraintTop_toTopOf="@id/background_for_cart_info"
-        app:srcCompat="@drawable/ic_edit_24" />
+        app:srcCompat="@drawable/ic_additionals" />
     <!-- Добавить в избранное -->
 
     <ImageView

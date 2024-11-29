@@ -21,4 +21,9 @@
     <dimen name="recycler_view_offset_1">1dp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="small_meal_image_96">96dp</dimen>
+    <dimen name="regular_text_size_14">14sp</dimen>
+    <dimen name="elevation_4">4dp</dimen>
+    <dimen name="big_margin_32">32dp</dimen>
+    <dimen name="mealdetails_image_width_250">250dp</dimen>
+    <dimen name="meal_details__cart_button_56">56dp</dimen>
 </resources>

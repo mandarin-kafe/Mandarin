@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginVertical="@dimen/standart_margin_16"
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
@@ -12,11 +13,11 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/small_meal_image_96"
         android:layout_marginHorizontal="@dimen/small_margin_8"
+        android:background="@color/grey_transparent_10"
         android:contentDescription="@null"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars"
-        android:background="@color/grey_transparent_10"/>
+        tools:srcCompat="@tools:sample/avatars" />
 
     <!-- Заголовок -->
     <TextView
@@ -24,14 +25,14 @@
         style="@style/RegularTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:maxLines="2"
         android:ellipsize="end"
         android:gravity="center_horizontal"
-        android:maxLines="1"
-        android:textSize="@dimen/regular_text_size_16"
+        android:textSize="@dimen/regular_text_size_14"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/iv_meal_picture"
         app:layout_constraintTop_toTopOf="@id/iv_meal_picture"
-        tools:text="Пармезан" />
+        tools:text="Охотничьи колбаски, 60г" />
 
     <TextView
         android:id="@+id/tv_meal_price"
@@ -41,7 +42,8 @@
         android:ellipsize="end"
         android:gravity="center_horizontal"
         android:maxLines="1"
-        android:textSize="@dimen/regular_text_size_16"
+        android:textSize="@dimen/regular_text_size_14"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/iv_meal_picture"
         app:layout_constraintTop_toTopOf="@id/iv_meal_picture"
