@@ -504,7 +504,7 @@ var mockAdditionalsList = arrayListOf<Meal>(
     ),
     Meal(
         "98",
-        "Моцарелла",
+        "Мягкая моцарелла",
         "",
         70,
         90,
@@ -537,7 +537,7 @@ var mockAdditionalsList = arrayListOf<Meal>(
     ),
     Meal(
         "98",
-        "Моцарелла",
+        "Мягкая моцарелла",
         "",
         70,
         90,
@@ -548,7 +548,7 @@ var mockAdditionalsList = arrayListOf<Meal>(
     ),
     Meal(
         "98",
-        "Салями",
+        "Охотничьи колбаски",
         "",
         50,
         120,
@@ -603,7 +603,7 @@ var mockAdditionalsList = arrayListOf<Meal>(
     ),
     Meal(
         "98",
-        "Салями",
+        "Охотничьи колбаски",
         "",
         50,
         120,

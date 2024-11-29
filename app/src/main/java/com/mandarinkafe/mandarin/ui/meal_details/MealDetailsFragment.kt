@@ -4,8 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
+import android.widget.Toast
 import androidx.core.bundle.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -15,7 +19,6 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.databinding.FragmentMealDetailsBinding
 import com.mandarinkafe.mandarin.domain.models.Meal
 import com.mandarinkafe.mandarin.domain.models.mockAdditionalsList
-import org.koin.java.KoinJavaComponent.getKoin
 
 
 class MealDetailsFragment : Fragment() {
@@ -23,7 +26,8 @@ class MealDetailsFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: MealDetailsAdapter
     private lateinit var binding: FragmentMealDetailsBinding
-    val meal by lazy {
+    private val viewModel: MealDetailsViewModel by viewModels()
+    private val meal by lazy {
         gson.fromJson(
             requireArguments().getString(MEAL),
             Meal::class.java
@@ -49,23 +53,53 @@ class MealDetailsFragment : Fragment() {
         binding.apply {
             tvMealTitle.text = meal.name
             tvMealIngredients.text = meal.description
-            tvMealWeight.text = meal.weight.toString() + " г"
+            tvMealWeight.text = getString(R.string.meal_weight, meal.weight)
 
             Glide.with(requireContext())
                 .load(meal.imageUrl)
                 .centerCrop()
                 .transform(RoundedCorners(cornerRadius))
                 .placeholder(R.drawable.ic_cover_placeholder)
-                .into(binding.ivMealPicture)
+                .into(ivMealPicture)
+
+            fabAddToCartPrice.text = getString(R.string.meal_price, meal.price)
+            ivMealPicture.animation = AnimationUtils.loadAnimation(context, R.anim.fade_in)
+            ivMealPicture.animate()
+
+            ibBack.setOnClickListener {
+                findNavController().navigateUp()
+            }
+            fabAddToCartPrice.setOnClickListener {
+                onCartButtonClick()
+            }
+            ivAddToFavorite.setOnClickListener {
+                onFavoriteToggleClick()
+            }
         }
     }
 
+    private fun onCartButtonClick() {
+        Toast.makeText(
+            requireContext(),
+            "Добавляю в корзину ${meal.name}, ${meal.price} ₽",
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    private fun onFavoriteToggleClick() {
+        viewModel.toggleFavorite(meal)
+        Toast.makeText(
+            requireContext(),
+            "Тык на сердечко: ${meal.name}",
+            Toast.LENGTH_SHORT
+        ).show()
+    }
 
     private fun setupRecyclerView() {
 
         adapter = MealDetailsAdapter(mockAdditionalsList)
 
-        recyclerView.layoutManager = GridLayoutManager(requireContext(), 4)
+        recyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
         recyclerView.adapter = adapter
     }
 

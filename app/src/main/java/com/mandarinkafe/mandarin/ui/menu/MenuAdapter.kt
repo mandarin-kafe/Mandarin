@@ -120,9 +120,9 @@ class MenuAdapter(
                 tvMealWeight.isVisible = false
             } else {
                 tvMealWeight.isVisible = true
-                tvMealWeight.text = meal.weight.toString() + " г"
+                tvMealWeight.text = "${meal.weight} г"
             }
-            btAddToCartPrice.text = meal.price.toString() + " ₽"
+            btAddToCartPrice.text = "${meal.price} ₽"
 
             Glide.with(parentView)
                 .load(meal.imageUrl)

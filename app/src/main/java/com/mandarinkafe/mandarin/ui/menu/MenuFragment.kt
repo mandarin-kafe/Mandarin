@@ -79,6 +79,12 @@ class MenuFragment : Fragment() {
         { state -> renderMenuScreen(state) }
         setupScrollSync()
         setupTabs()
+
+        val defaultTab = tabLayoutMain.getTabAt(0)
+        if (defaultTab != null) {
+            subTabsManager(defaultTab.text.toString())
+            Log.d("DEBUG", "Вызываю subTabsManager для вкладки ${defaultTab.text.toString()}")
+        }
     }
 
     private var isTabSyncing = false
@@ -86,27 +92,37 @@ class MenuFragment : Fragment() {
     private fun setupTabs() {
         menuCategories.forEach { category ->
             val tab = tabLayoutMain.newTab().setText(category.name)
-            when (category.name) {
-                "ПИЦЦА" -> tab.setIcon(R.drawable.pizza)
-                "СУШИ И РОЛЛЫ" -> tab.setIcon(R.drawable.sushi)
-                "БУРГЕРЫ" -> tab.setIcon(R.drawable.burger)
-                "ХОТ-ДОГИ И ДОНЕР" -> tab.setIcon(R.drawable.hotdog)
-                "WOK" -> tab.setIcon(R.drawable.wok)
+            when (category.name.lowercase()) {
+                "пицца" -> tab.setIcon(R.drawable.pizza)
+                "суши и роллы" -> tab.setIcon(R.drawable.sushi)
+                "бургеры" -> tab.setIcon(R.drawable.burger)
+                "хот-доги и донер" -> tab.setIcon(R.drawable.hotdog)
+                "wok" -> tab.setIcon(R.drawable.wok)
             }
             tabLayoutMain.addTab(tab)
         }
 
         tabLayoutMain.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
+                if (tab != null) {
+                    Log.d(
+                        "DEBUG",
+                        "Вызов onTabSelected для вкладки ${tab.text.toString()}, значение isTabSyncing = $isTabSyncing"
+                    )
+                    Log.d("DEBUG", "Вызываю subTabsManager для вкладки ${tab.text.toString()}")
+                    subTabsManager(tab.text.toString())
+                }
                 if (isTabSyncing) return
                 val position = tab?.position ?: 0
                 if (tab != null) {
-                    subTabsManager(tab.text.toString())
+
+
                     scrollToCategory(position)
                 }
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
+                Log.d("DEBUG", "Очищаю дочерние вкладки в методе onTabUnselected")
                 tabLayoutSub.removeAllTabs()
             }
 
@@ -142,9 +158,13 @@ class MenuFragment : Fragment() {
                                 menuCategories.indexOfFirst { it.name == categoryName }
                             if (headerIndex != -1 && headerIndex != tabLayoutMain.selectedTabPosition) {
                                 isTabSyncing = true
+                                //TODO сейчас именно из-за этого флага не срабатывает наоплнение вкладок второго уровня при скролле.
+                                // НО флаг убирать нельзя. Надо думать как чинить.
                                 val tab = tabLayoutMain.getTabAt(headerIndex)
                                 tab?.select() // Вызываем addOnTabSelectedListener
                                 isTabSyncing = false
+
+
                             }
                             break
                         }
@@ -197,6 +217,7 @@ class MenuFragment : Fragment() {
             })
         }
     }
+
     private fun scrollToCategory(position: Int) {
         val headerPosition = menuItems.indexOfFirst {
             it is MenuItem.Header && it.categoryName == menuCategories[position].name

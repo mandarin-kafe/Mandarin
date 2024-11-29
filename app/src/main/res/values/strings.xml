@@ -99,4 +99,9 @@
     </string>
     <string name="search">Поиск</string>
     <string name="favorite">Избранное</string>
+    <string name="back">Назад</string>
+    <string name="default_price_for_button">000 ₽</string>
+    <string name="meal_weight">%1$i г</string>
+    <string name="meal_price">%1$i ₽</string>
+    <string name="meal_title_with_weight">%1$s, %2$d г</string>
 </resources>

@@ -34,13 +34,16 @@ class MealDetailsAdapter(private val items: ArrayList<Meal>) :
         private val binding = ListAdditionalsItemBinding.bind(itemView)
 
         fun bind(item: Meal) {
-            binding.tvMealTitle.text = item.name
+            binding.apply {
+                tvMealTitle.text = item.name + ", " + item.weight.toString() + " г"
+                tvMealPrice.text = item.price.toString() + " ₽"
 
-            Glide.with(itemView)
-                .load(item.imageUrl)
-                .centerCrop()
-                .placeholder(R.drawable.ic_cover_placeholder)
-                .into(binding.ivMealPicture)
+                Glide.with(itemView)
+                    .load(item.imageUrl)
+                    .centerCrop()
+                    .placeholder(R.drawable.ic_cover_placeholder)
+                    .into(ivMealPicture)
+            }
         }
     }
 }
