@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.ui.meal_details
 
 import android.os.Bundle
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
@@ -23,9 +23,10 @@ import com.mandarinkafe.mandarin.domain.models.mockAdditionalsList
 
 class MealDetailsFragment : Fragment() {
     private val gson: Gson by lazy { Gson() }
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: MealDetailsAdapter
-    private lateinit var binding: FragmentMealDetailsBinding
+    private var _binding: FragmentMealDetailsBinding? = null
+    private val binding get() = _binding!!
+
+
     private val viewModel: MealDetailsViewModel by viewModels()
     private val meal by lazy {
         gson.fromJson(
@@ -39,17 +40,19 @@ class MealDetailsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentMealDetailsBinding.inflate(inflater, container, false)
+        _binding = FragmentMealDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recyclerView = binding.rvAdditionals
         setupRecyclerView()
+        setMealData()
+    }
+
+    private fun setMealData() {
         val cornerRadius =
             resources.getDimensionPixelSize(R.dimen.image_corner_radius_2)
-
         binding.apply {
             tvMealTitle.text = meal.name
             tvMealIngredients.text = meal.description
@@ -78,6 +81,13 @@ class MealDetailsFragment : Fragment() {
         }
     }
 
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+
+    }
+
     private fun onCartButtonClick() {
         Toast.makeText(
             requireContext(),
@@ -96,8 +106,8 @@ class MealDetailsFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-
-        adapter = MealDetailsAdapter(mockAdditionalsList)
+        val recyclerView = binding.rvAdditionals
+        val adapter = MealDetailsAdapter(mockAdditionalsList)
 
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
         recyclerView.adapter = adapter
