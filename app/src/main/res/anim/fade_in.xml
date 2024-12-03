@@ -2,5 +2,5 @@
     <alpha
         android:fromAlpha="0.0"
         android:toAlpha="1.0"
-        android:duration="500" />
+        android:duration="@integer/material_motion_duration_medium_1" />
 </set>

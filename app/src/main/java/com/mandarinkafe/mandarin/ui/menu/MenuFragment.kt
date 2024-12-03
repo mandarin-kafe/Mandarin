@@ -21,7 +21,6 @@ import com.mandarinkafe.mandarin.databinding.FragmentMenuBinding
 import com.mandarinkafe.mandarin.domain.models.Meal
 import com.mandarinkafe.mandarin.domain.models.MenuCategory
 import com.mandarinkafe.mandarin.domain.models.MenuItem
-import com.mandarinkafe.mandarin.domain.models.mockMenuData
 import com.mandarinkafe.mandarin.ui.meal_details.MealDetailsFragment
 import com.mandarinkafe.mandarin.ui.menu.MenuViewModel.MenuScreenState
 
@@ -32,10 +31,10 @@ class MenuFragment : Fragment() {
     private val tabLayoutSub: TabLayout by lazy { binding.tabLayoutSubCategories }
     private val recyclerView: RecyclerView by lazy { binding.rvMenu }
     private var isClickAllowed = true
+    private var isTabSyncing = false
     private val handler = Handler(Looper.getMainLooper())
     private val viewModel: MenuViewModel by viewModels()
-    private var menuItems = mutableListOf<MenuItem>()
-    private var menuCategories = arrayListOf<MenuCategory>()
+
     private var menuSubCategoriesPizza = arrayListOf<String>(
         "Классическая",
         "Римская",
@@ -60,38 +59,41 @@ class MenuFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMenuBinding.inflate(inflater, container, false)
-
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        menuCategories =
-            mockMenuData // TODO убрать это!!! Обработка данных должна быть в дата слое.
-
-        menuCategories.forEach { category ->
-            menuItems.add(MenuItem.Header(category.name))
-            menuItems.addAll(category.items.map { MenuItem.MealItem(it) })
-            // TODO убрать это!!! Обработка данных должна быть в дата слое.
-        }
-
         viewModel.prepareMenuItems()
         viewModel.getMenuState().observe(viewLifecycleOwner)
-        { state -> renderMenuScreen(state) }
-        setupScrollSync()
-        setupTabs()
 
-        val defaultTab = tabLayoutMain.getTabAt(0)
-        if (defaultTab != null) {
-            subTabsManager(defaultTab.text.toString())
-            Log.d("DEBUG", "Вызываю subTabsManager для вкладки ${defaultTab.text.toString()}")
+        { state -> renderMenuScreen(state) }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(
+            "DEBUG",
+            "Метод onResume, tabLayoutMain.visibility = ${tabLayoutMain.isVisible.toString()}"
+        )
+
+        for (i in 0 until tabLayoutMain.tabCount) {
+            val tab = tabLayoutMain.getTabAt(i)
+            Log.d("TabLayout", "Вкладка $i: ${tab?.text ?: "Без текста"}")
+            tabLayoutMain.visibility = View.VISIBLE
+            tabLayoutSub.visibility = View.VISIBLE
         }
     }
 
-    private var isTabSyncing = false
+    override fun onDestroyView() {
+        super.onDestroyView()
+        tabLayoutMain.removeAllTabs()
+        Log.d("DEBUG", "Метод onDestroyView, удаляю все вкладки у tabLayoutMain")
+    }
 
-    private fun setupTabs() {
+
+    private fun setTabs(menuCategories: ArrayList<MenuCategory>) {
         menuCategories.forEach { category ->
             val tab = tabLayoutMain.newTab().setText(category.name)
             when (category.name.lowercase()) {
@@ -102,8 +104,19 @@ class MenuFragment : Fragment() {
                 "wok" -> tab.setIcon(R.drawable.wok)
             }
             tabLayoutMain.addTab(tab)
+            Log.d("DEBUG", "Метод setTabs, добавляю вкладку ${tab.text}")
         }
+    }
 
+
+    private fun addOnTabSelectedListener(
+        menuCategories: ArrayList<MenuCategory>,
+        menuItems: MutableList<MenuItem>
+    ) {
+        Log.d(
+            "DEBUG",
+            "Вызов метода addOnTabSelectedListener для усановки OnTabSelectedListener"
+        )
         tabLayoutMain.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (tab != null) {
@@ -111,15 +124,12 @@ class MenuFragment : Fragment() {
                         "DEBUG",
                         "Вызов onTabSelected для вкладки ${tab.text.toString()}, значение isTabSyncing = $isTabSyncing"
                     )
-                    Log.d("DEBUG", "Вызываю subTabsManager для вкладки ${tab.text.toString()}")
                     subTabsManager(tab.text.toString())
                 }
                 if (isTabSyncing) return
                 val position = tab?.position ?: 0
                 if (tab != null) {
-
-
-                    scrollToCategory(position)
+                    scrollToCategory(position, menuCategories, menuItems)
                 }
             }
 
@@ -132,8 +142,11 @@ class MenuFragment : Fragment() {
         })
     }
 
-
-    private fun setupScrollSync() {
+    private fun setScrollSync(
+        menuCategories: ArrayList<MenuCategory>,
+        menuItems: MutableList<MenuItem>
+    ) {
+        Log.d("DEBUG", "Вызвала метод setScrollSync для установки addOnScrollListener")
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (isTabSyncing) return // Игнорируем вызовы, если синхронизация уже идёт
@@ -160,13 +173,10 @@ class MenuFragment : Fragment() {
                                 menuCategories.indexOfFirst { it.name == categoryName }
                             if (headerIndex != -1 && headerIndex != tabLayoutMain.selectedTabPosition) {
                                 isTabSyncing = true
-                                //TODO сейчас именно из-за этого флага не срабатывает наоплнение вкладок второго уровня при скролле.
-                                // НО флаг убирать нельзя. Надо думать как чинить.
+
                                 val tab = tabLayoutMain.getTabAt(headerIndex)
-                                tab?.select() // Вызываем addOnTabSelectedListener
+                                tab?.select()
                                 isTabSyncing = false
-
-
                             }
                             break
                         }
@@ -177,6 +187,7 @@ class MenuFragment : Fragment() {
     }
 
     private fun subTabsManager(category: String) {
+        Log.d("DEBUG", "Вызов  subTabsManager для $category")
         //временный метод для проверки вёрстки. Нужно будет сделать нормальный,
         // когда поймём структуру их фида и как вытащить субкатегории и родительскую категорию.
 
@@ -220,7 +231,10 @@ class MenuFragment : Fragment() {
         }
     }
 
-    private fun scrollToCategory(position: Int) {
+    private fun scrollToCategory(
+        position: Int, menuCategories: ArrayList<MenuCategory>,
+        menuItems: MutableList<MenuItem>
+    ) {
         val headerPosition = menuItems.indexOfFirst {
             it is MenuItem.Header && it.categoryName == menuCategories[position].name
         }
@@ -229,6 +243,7 @@ class MenuFragment : Fragment() {
             val offset = resources.getDimensionPixelSize(R.dimen.recycler_view_offset_1)
             layoutManager.scrollToPositionWithOffset(headerPosition, offset)
         }
+
     }
 
     private fun showMealDetails(meal: Meal) {
@@ -246,21 +261,30 @@ class MenuFragment : Fragment() {
 
             is MenuScreenState.NetworkError -> {
                 placeholderManager(VisibilityStatus.VISIBLE)
-
             }
 
             is MenuScreenState.Content -> {
                 progressBarManager(VisibilityStatus.HIDDEN)
                 placeholderManager(VisibilityStatus.HIDDEN)
-//                menuItems = state.menuItems
-//                menuCategories = state.menuCategories
-                setRvAdapter()
+                setTabs(state.menuCategories)
+                setScrollSync(state.menuCategories, state.menuItems)
+                addOnTabSelectedListener(state.menuCategories, state.menuItems)
+                setRvAdapter(state.menuItems)
+
+                val defaultTab = tabLayoutMain.getTabAt(0)
+                if (defaultTab != null) {
+                    subTabsManager(defaultTab.text.toString())
+                    Log.d(
+                        "DEBUG",
+                        "Установила дефолтную вкладку, вызываю subTabsManager для вкладки ${defaultTab.text.toString()}"
+                    )
+                }
             }
         }
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun setRvAdapter(): MenuAdapter {
+    private fun setRvAdapter(menuItems: MutableList<MenuItem>): MenuAdapter {
         val menuAdapter = MenuAdapter(menuItems,
             object : MenuAdapter.MealClickListener {
                 override fun onMealClick(meal: Meal) {

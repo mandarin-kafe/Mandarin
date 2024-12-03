@@ -2,5 +2,5 @@
     <translate
         android:fromYDelta="100%p"
         android:toYDelta="0"
-        android:duration="200" />
+        android:duration="@integer/material_motion_duration_short_2" />
 </set>

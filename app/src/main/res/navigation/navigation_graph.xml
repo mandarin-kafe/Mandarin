@@ -13,8 +13,8 @@
         <action
             android:id="@+id/action_menuFragment_to_mealDetails"
             app:destination="@id/mealDetails"
-            app:enterAnim="@anim/slide_up"
-            app:exitAnim="@anim/slide_down"/>
+            app:enterAnim="@anim/slide_in_right"
+          />
     </fragment>
     <fragment
         android:id="@+id/mealDetails"

@@ -53,7 +53,7 @@ class MealDetailsFragment : Fragment() {
         binding.apply {
             tvMealTitle.text = meal.name
             tvMealIngredients.text = meal.description
-            tvMealWeight.text ="${meal.weight} г"
+            tvMealWeight.text = getString(R.string.meal_weight_template, meal.weight)
 
             Glide.with(requireContext())
                 .load(meal.imageUrl)
@@ -62,7 +62,7 @@ class MealDetailsFragment : Fragment() {
                 .placeholder(R.drawable.ic_cover_placeholder)
                 .into(ivMealPicture)
 
-            fabAddToCartPrice.text = "${meal.price} ₽"
+            fabAddToCartPrice.text = getString(R.string.meal_price_template, meal.price)
             ivMealPicture.animation = AnimationUtils.loadAnimation(context, R.anim.fade_in)
             ivMealPicture.animate()
 

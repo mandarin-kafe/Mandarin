@@ -73,7 +73,6 @@
             android:adjustViewBounds="true"
             android:contentDescription="@null"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-
             app:srcCompat="@drawable/banner" />
 
 
@@ -84,7 +83,6 @@
             android:layout_marginBottom="0dp"
             android:background="@android:color/transparent"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:tabGravity="fill"
             app:tabIconTint="@color/tab_icon_tint"
             app:tabIndicatorHeight="0dp"
             app:tabMode="scrollable"
@@ -100,7 +98,6 @@
             android:background="@color/app_background_color"
             android:visibility="visible"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:tabGravity="fill"
             app:tabIndicatorHeight="0dp"
             app:tabMode="scrollable"
             app:tabRippleColor="@android:color/transparent"
