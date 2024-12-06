@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Мандарин</string>
-    <string name="search">Поиск по меню</string>
+    <string name="search_menu">Поиск по меню</string>
+    <string name="search">Поиск</string>
     <string name="search_field_icon"> Поле поиска</string>
     <string name="clear_text">Очистить текст</string>
     <string name="add_to_cart">Добавить в корзину</string>
@@ -14,4 +15,9 @@
     <string name="delivery">Доставка</string>
     <string name="delivery_history">История заказов</string>
     <string name="favorite">Избранное</string>
+    <string name="sushi">Суши</string>
+    <string name="pizza">Пицца</string>
+    <string name="hamburger">Гамбургеры</string>
+    <string name="hot_dog">Хот-доги</string>
+    <string name="fast_roll">Фаст-роллы</string>
 </resources>
