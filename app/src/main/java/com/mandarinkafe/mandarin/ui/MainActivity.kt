@@ -12,9 +12,6 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.navigation.fragment.NavHostFragment
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.databinding.ActivityMainBinding
 import com.mandarinkafe.mandarin.ui.cart.CartFragment
@@ -29,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         get() = requireNotNull(_appBarConfiguration) { "App Bar Configuration wasn't initialized" }
 
     private var cartFragment: CartFragment? = null
-  
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
@@ -41,7 +38,6 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.appBarMain.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
         val drawerLayout: DrawerLayout = binding.drawerLayoutMain
-        val navView: NavigationView = binding.navView
         val host: NavHostFragment = supportFragmentManager
             .findFragmentById(R.id.container_view) as NavHostFragment? ?: return
         val navController = host.navController
@@ -50,25 +46,16 @@ class MainActivity : AppCompatActivity() {
             navController.graph, drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.container_view)
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-    }
-        binding.btnRight.setOnClickListener {
+        binding.appBarMain.btCart.setOnClickListener {
             val cartFragment = CartFragment()
             supportFragmentManager.beginTransaction()
-                .replace(R.id.container_view,cartFragment!!)
+                .replace(R.id.container_view,cartFragment)
                 .addToBackStack(null)
                 .commit()
         }
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.container_view) as NavHostFragment
-        val navController = navHostFragment.navController
 
 
-        val headToolbar = binding.headToolbar
+        val headToolbar = binding.appBarMain.toolbar
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             val window = window
@@ -86,6 +73,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = findNavController(R.id.container_view)
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+
     fun updateCartAdapter() {
         cartFragment?.displayCartItems()
     }

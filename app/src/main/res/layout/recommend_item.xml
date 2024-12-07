@@ -49,7 +49,7 @@
 
             <Button
                 android:id="@+id/price_recommendMeal_in_card"
-                style="@style/AddToCartButtonStyle"
+                style="@style/CartButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/standart_margin_16"
