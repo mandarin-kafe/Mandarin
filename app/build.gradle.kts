@@ -46,6 +46,7 @@ dependencies {
     implementation(libs.androidx.viewpager2)
     implementation(libs.koin.android)
     implementation(libs.glide)
+    implementation(libs.androidx.coordinatorlayout)
     annotationProcessor(libs.compiler)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)

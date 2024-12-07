@@ -15,7 +15,6 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.databinding.ListMenuItemBinding
 import com.mandarinkafe.mandarin.domain.models.Meal
-
 import com.mandarinkafe.mandarin.domain.models.MenuItem
 
 
@@ -24,7 +23,6 @@ class MenuAdapter(
     private val clickListener: MealClickListener
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
 
@@ -59,12 +57,17 @@ class MenuAdapter(
             is MenuItem.Header -> (holder as HeaderViewHolder).bind(item)
             is MenuItem.MealItem -> {
                 (holder as MealViewHolder).bind(item.meal)
+                // TODO Установку OnClickListener можно вынести из Холдера сюда, тогда можно будет использовать clickDebounce,
+                // ну и не придётся передавать в Холдер обьект clickListener.
+
             }
         }
     }
 
-    override fun getItemCount(): Int {
-        return items.size
+    private fun onMealClickListener(meal: Meal) {
+        if (clickDebounce()) {
+            clickListener.onMealClick(meal)
+        }
     }
 
     private fun clickDebounce(): Boolean {
@@ -76,20 +79,16 @@ class MenuAdapter(
         return current
     }
 
-    private fun onMealClickListener(meal: Meal) {
-        if (clickDebounce()) {
-            clickListener.onMealClick(meal)
-        }
+    override fun getItemCount(): Int {
+        return items.size
     }
 
     class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val headerTextView: TextView = itemView.findViewById(R.id.tv_category_title)
-
         fun bind(header: MenuItem.Header) {
             headerTextView.text = header.categoryName
         }
     }
-
 
     class MealViewHolder(
         private val parentView: View,
@@ -97,25 +96,33 @@ class MenuAdapter(
     ) :
         RecyclerView.ViewHolder(parentView) {
         private val binding = ListMenuItemBinding.bind(parentView)
+        private var numberInCart = 0 // TODO временная переменная! брать цифру из логики корзины
+        // Потом брать эту цифру из логики корзины, а то Холдер одну и ту же переменную привязывает к разным товарам
 
-        fun bind(meal: Meal) = with(binding) {
-            val cornerRadius =
-                this@MealViewHolder.parentView.resources.getDimensionPixelSize(R.dimen.image_corner_radius_2)
+        private val cornerRadius =
+            this@MealViewHolder.parentView.resources.getDimensionPixelSize(R.dimen.image_corner_radius_2)
+
+        fun bind(meal: Meal) {
+            setMealData(meal)
+            setOnClickListeners(meal)
+            if (meal.category != "pizza") {binding.ivEditMeal.isVisible = false} else {binding.ivEditMeal.isVisible = true}
+        }
+
+        private fun setMealData(meal: Meal) = with(binding) {
             tvMealTitle.text = meal.name
-
             if (meal.description.isNullOrEmpty()) {
                 tvMealIngredients.isVisible = false
             } else {
+                tvMealIngredients.isVisible = true
                 tvMealIngredients.text = meal.description
             }
-
             if (meal.weight == null) {
                 tvMealWeight.isVisible = false
             } else {
-                tvMealWeight.text = meal.weight.toString() + " г"
+                tvMealWeight.isVisible = true
+                tvMealWeight.text = "${meal.weight} г"
             }
-
-            btAddToCartPrice.text = meal.price.toString() + " ₽"
+            btAddToCartPrice.text = "${meal.price} ₽"
 
             Glide.with(parentView)
                 .load(meal.imageUrl)
@@ -125,16 +132,36 @@ class MenuAdapter(
                 .into(ivMealPicture)
             tvMealIngredients.requestLayout()
             ivAddToFavorite.setImageDrawable(getFavoriteDrawable(meal.isFavorite))
+        }
 
-
-            itemView.setOnClickListener { clickListener.onMealClick(meal) }
-            ivAddToFavorite.setOnClickListener { clickListener.onFavoriteToggleClick(meal) }
+        private fun setOnClickListeners(meal: Meal) = with(binding) {
+            parentView.setOnClickListener { clickListener.onMealClick(meal)}
+            ivAddToFavorite .setOnClickListener {
+                clickListener.onFavoriteToggleClick(
+                    meal
+                )
+            }
+            ivEditMeal.setOnClickListener { clickListener.onEditClick(meal) }
             btAddToCartPrice.setOnClickListener {
                 clickListener.onAddToCartClick(meal)
-                extraCartButtonsManager(VisibilityStatus.VISIBLE)
+                tvNumberInCart.text = (++numberInCart).toString() + " шт"
+                tvTotalPriceInCart.text = (meal.price * numberInCart).toString() + " ₽"
+                extraCartButtonsManager(inCart = true)
             }
-            btCartMinus.setOnClickListener { clickListener.minusToCartClick(meal) }
-            btCartPlus.setOnClickListener { clickListener.plusToCartClick(meal) }
+
+            btCartMinus.setOnClickListener {
+                clickListener.minusToCartClick(meal)
+                tvNumberInCart.text = (--numberInCart).toString() + " шт"
+                tvTotalPriceInCart.text = (meal.price * numberInCart).toString() + " ₽"
+                if (numberInCart == 0) {
+                    extraCartButtonsManager(inCart = false)
+                }
+            }
+            btCartPlus.setOnClickListener {
+                clickListener.plusToCartClick(meal)
+                tvNumberInCart.text = (++numberInCart).toString() + " шт"
+                tvTotalPriceInCart.text = (meal.price * numberInCart).toString() + " ₽"
+            }
         }
 
         @SuppressLint("UseCompatLoadingForDrawables")
@@ -144,22 +171,24 @@ class MenuAdapter(
             )
         }
 
-        private fun extraCartButtonsManager(status: VisibilityStatus) {
-            when (status) {
-                VisibilityStatus.VISIBLE -> binding.apply {
+        private fun extraCartButtonsManager(inCart: Boolean) {
+            when (inCart) {
+                true -> binding.apply {
                     btAddToCartPrice.visibility = View.GONE
                     btCartMinus.visibility = View.VISIBLE
                     btCartPlus.visibility = View.VISIBLE
+                    tvNumberInCart.visibility = View.VISIBLE
+                    tvTotalPriceInCart.visibility = View.VISIBLE
                 }
 
-                VisibilityStatus.HIDDEN -> binding.apply {
+                false -> binding.apply {
                     btAddToCartPrice.visibility = View.VISIBLE
                     btCartMinus.visibility = View.GONE
                     btCartPlus.visibility = View.GONE
+                    tvNumberInCart.visibility = View.GONE
+                    tvTotalPriceInCart.visibility = View.GONE
                 }
             }
-
-
         }
     }
 
@@ -167,8 +196,10 @@ class MenuAdapter(
         fun onMealClick(meal: Meal)
         fun onFavoriteToggleClick(meal: Meal)
         fun onAddToCartClick(meal: Meal)
+        fun onEditClick(meal: Meal)
         fun plusToCartClick(meal: Meal)
         fun minusToCartClick(meal: Meal)
+
     }
 
     private companion object {
@@ -176,10 +207,5 @@ class MenuAdapter(
         const val VIEW_TYPE_HEADER = 0
         const val VIEW_TYPE_MEAL = 1
 
-        enum class VisibilityStatus {
-            VISIBLE,
-            HIDDEN
-        }
     }
-
 }

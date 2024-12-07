@@ -2,12 +2,12 @@ package com.mandarinkafe.mandarin.domain.models
 
 data class Meal(
     val id: String,                // Уникальный идентификатор блюда
-    val name: String,              // Название блюда
-    val description: String?,      // Описание блюда
-    val weight: Int?,              // Вес блюда в граммах
-    val price: Int,                // Цена блюда
+    val name: String,              // Название
+    val description: String?,      // Описание
+    val weight: Int?,              // Вес в граммах
+    val price: Int,                // Цена
     val imageUrl: String,          // Ссылка на изображение блюда
-    val category: String,          // Категория блюда
+    val category: String,          // Категория блюда. !Возможно, не понадобится это поле.
     val isVegetarian: Boolean,     // Флаг: является ли блюдо вегетарианским
     val isFavorite: Boolean,     // Флаг: есть ли блюдо в списка избранных (инфо из Shared Prefs)
 )
@@ -223,7 +223,38 @@ var mockBurgerList = arrayListOf<Meal>(
                 "✓ помидоры\n" +
                 "✓ соус сальса\n" +
                 "✓ соус максибургер",
-        null,
+        300,
+        425,
+        "https://optim.tildacdn.com/tild6631-3532-4535-b334-666436313734/-/resize/312x/-/format/webp/_-2.jpg",
+        "burger",
+        true,
+        false
+    ),
+    Meal(
+        "32",
+        "ХАМБУРГЕР",
+        "✓ булка\n" +
+                "✓ говяжья котлета\n" +
+                "✓ сыр чеддер\n" +
+                "✓ соус микс барбекю",
+        299,
+        455,
+        "https://optim.tildacdn.com/tild6337-3237-4264-a535-333266346235/-/resize/312x/-/format/webp/_-2.jpg",
+        "burger",
+        false,
+        false
+    ),
+    Meal(
+        "33",
+        "ДЗЕН",
+        "✓ котлета из нута\n" +
+                "✓ сыр чеддер\n" +
+                "✓ айсберг\n" +
+                "✓ красный лук\n" +
+                "✓ помидоры\n" +
+                "✓ соус сальса\n" +
+                "✓ соус максибургер",
+        300,
         425,
         "https://optim.tildacdn.com/tild6631-3532-4535-b334-666436313734/-/resize/312x/-/format/webp/_-2.jpg",
         "burger",
@@ -403,3 +434,182 @@ var mockSushiList = arrayListOf<Meal>(
     ),
 
     )
+
+var mockAdditionalsList = arrayListOf<Meal>(
+    Meal(
+        "99",
+        "Пармезан",
+        "",
+        60,
+        120,
+        "https://optim.tildacdn.com/tild6462-6661-4039-b165-353734396636/-/format/webp/dobavki_syr.png",
+        "additionals",
+        false,
+        false
+    ),
+    Meal(
+        "98",
+        "Моцарелла",
+        "",
+        70,
+        90,
+        "https://optim.tildacdn.com/tild6462-6661-4039-b165-353734396636/-/format/webp/dobavki_syr.png",
+        "additionals",
+        false,
+        false
+    ),
+    Meal(
+        "98",
+        "Салями",
+        "",
+        50,
+        120,
+        "https://optim.tildacdn.com/tild3932-3938-4236-b732-626136386461/-/format/webp/myaso_new.png",
+        "additionals",
+        false,
+        false
+    ),
+    Meal(
+        "98",
+        "Бекон",
+        "",
+        60,
+        110,
+        "https://optim.tildacdn.com/tild3932-3938-4236-b732-626136386461/-/format/webp/myaso_new.png",
+        "additionals",
+        false,
+        false
+    ),
+    Meal(
+        "98",
+        "Моцарелла",
+        "",
+        70,
+        90,
+        "https://optim.tildacdn.com/tild6462-6661-4039-b165-353734396636/-/format/webp/dobavki_syr.png",
+        "additionals",
+        false,
+        false
+    ),
+    Meal(
+        "98",
+        "Салями",
+        "",
+        50,
+        120,
+        "https://optim.tildacdn.com/tild3932-3938-4236-b732-626136386461/-/format/webp/myaso_new.png",
+        "additionals",
+        false,
+        false
+    ),
+    Meal(
+        "98",
+        "Мягкая моцарелла",
+        "",
+        70,
+        90,
+        "https://optim.tildacdn.com/tild6462-6661-4039-b165-353734396636/-/format/webp/dobavki_syr.png",
+        "additionals",
+        false,
+        false,
+    ),
+    Meal(
+        "98",
+        "Салями",
+        "",
+        50,
+        120,
+        "https://optim.tildacdn.com/tild3932-3938-4236-b732-626136386461/-/format/webp/myaso_new.png",
+        "additionals",
+        false,
+        false
+    ),
+    Meal(
+        "99",
+        "Пармезан",
+        "",
+        60,
+        120,
+        "https://optim.tildacdn.com/tild6462-6661-4039-b165-353734396636/-/format/webp/dobavki_syr.png",
+        "additionals",
+        false,
+        false
+    ),
+    Meal(
+        "98",
+        "Мягкая моцарелла",
+        "",
+        70,
+        90,
+        "https://optim.tildacdn.com/tild6462-6661-4039-b165-353734396636/-/format/webp/dobavki_syr.png",
+        "additionals",
+        false,
+        false
+    ),
+    Meal(
+        "98",
+        "Охотничьи колбаски",
+        "",
+        50,
+        120,
+        "https://optim.tildacdn.com/tild3932-3938-4236-b732-626136386461/-/format/webp/myaso_new.png",
+        "additionals",
+        false,
+        false
+    ),
+    Meal(
+        "98",
+        "Бекон",
+        "",
+        60,
+        110,
+        "https://optim.tildacdn.com/tild3932-3938-4236-b732-626136386461/-/format/webp/myaso_new.png",
+        "additionals",
+        false,
+        false
+    ),
+    Meal(
+        "98",
+        "Моцарелла",
+        "",
+        70,
+        90,
+        "https://optim.tildacdn.com/tild6462-6661-4039-b165-353734396636/-/format/webp/dobavki_syr.png",
+        "additionals",
+        false,
+        false
+    ),
+    Meal(
+        "98",
+        "Салями",
+        "",
+        50,
+        120,
+        "https://optim.tildacdn.com/tild3932-3938-4236-b732-626136386461/-/format/webp/myaso_new.png",
+        "additionals",
+        false,
+        false
+    ),
+    Meal(
+        "98",
+        "Моцарелла",
+        "",
+        70,
+        90,
+        "https://optim.tildacdn.com/tild6462-6661-4039-b165-353734396636/-/format/webp/dobavki_syr.png",
+        "additionals",
+        false,
+        false,
+    ),
+    Meal(
+        "98",
+        "Охотничьи колбаски",
+        "",
+        50,
+        120,
+        "https://optim.tildacdn.com/tild3932-3938-4236-b732-626136386461/-/format/webp/myaso_new.png",
+        "additionals",
+        false,
+        false
+    ),
+)
