@@ -10,4 +10,10 @@
         android:name="com.mandarinkafe.mandarin.ui.menu.MenuFragment"
         android:label="fragment_menu"
         tools:layout="@layout/fragment_menu" />
+
+    <fragment
+        android:id="@+id/cartFragment"
+        android:name="com.mandarinkafe.mandarin.ui.cart.CartFragment"
+        android:label="fragment_cart"
+        tools:layout="@layout/fragment_cart" />
 </navigation>
