@@ -21,6 +21,9 @@ import com.mandarinkafe.mandarin.databinding.FragmentMenuBinding
 import com.mandarinkafe.mandarin.domain.models.Meal
 import com.mandarinkafe.mandarin.domain.models.MenuCategory
 import com.mandarinkafe.mandarin.domain.models.MenuItem
+import com.mandarinkafe.mandarin.domain.models.mockMenuData
+import com.mandarinkafe.mandarin.ui.MainActivity
+import com.mandarinkafe.mandarin.ui.cart.Cart
 import com.mandarinkafe.mandarin.ui.meal_details.MealDetailsFragment
 import com.mandarinkafe.mandarin.ui.menu.MenuViewModel.MenuScreenState
 
@@ -318,11 +321,13 @@ class MenuFragment : Fragment() {
 
                 override fun onAddToCartClick(meal: Meal) {
                     //TODO("Not yet implemented")
+                    Cart.addItem(meal)
                     Toast.makeText(
                         requireContext(),
                         "Добавляю в корзину 1 ${meal.name}",
                         Toast.LENGTH_SHORT
                     ).show()
+                    (requireActivity() as MainActivity).updateCartAdapter()
                 }
 
                 override fun plusToCartClick(meal: Meal) {

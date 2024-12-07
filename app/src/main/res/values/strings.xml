@@ -8,6 +8,9 @@
     <string name="add_to_favorite">Добавить в избранное</string>
     <string name="minus">-</string>
     <string name="plus">+</string>
+
+    <string name="question_add_to_cart">Добавить в корзину ?</string>
+
     <string name="large_text">
         "Material is the metaphor.\n\n"
 
@@ -25,5 +28,6 @@
     <string name="meal_title_with_weight_template">%1$s, %2$d г</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
 
 </resources>

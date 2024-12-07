@@ -9,18 +9,22 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.fragment.NavHostFragment
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.databinding.ActivityMainBinding
+import com.mandarinkafe.mandarin.ui.cart.CartFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private var cartFragment: CartFragment? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        binding.btnRight.setOnClickListener {
+            val cartFragment = CartFragment()
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.container_view,cartFragment!!)
+                .addToBackStack(null)
+                .commit()
         }
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.container_view) as NavHostFragment
         val navController = navHostFragment.navController
@@ -43,5 +47,8 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+    fun updateCartAdapter() {
+        cartFragment?.displayCartItems()
     }
 }
