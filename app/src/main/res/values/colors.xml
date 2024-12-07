@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#1d1e1c</color>
-    <color name="black_transparent_50">#801D1E1C</color>
+    <color name="black">#000000</color>
+    <color name="app_black">#1d1e1c</color>
     <color name="app_background_color">#1d1e1c</color>
     <color name="default_status_bar_color">#1d1e1c</color>
     <color name="light_status_bar_color">#f5bd47</color>
@@ -11,5 +11,6 @@
     <color name="grey">#AEAFB4</color>
     <color name="grey_transparent_10">#1AAEAFB4</color>
     <color name="grey_transparent_75">#BFAEAFB4</color>
+    <color name="transparent">#00000000</color>
 
 </resources>
