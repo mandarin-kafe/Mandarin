@@ -3,18 +3,17 @@ package com.mandarinkafe.mandarin.ui
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.navigation.NavigationView
-import androidx.core.content.ContextCompat
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.databinding.ActivityMainBinding
 import com.mandarinkafe.mandarin.ui.cart.CartFragment
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,12 +46,9 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         binding.appBarMain.btCart.setOnClickListener {
-            val cartFragment = CartFragment()
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.container_view,cartFragment)
-                .addToBackStack(null)
-                .commit()
-        }
+            navController.navigate(
+                R.id.action_menuFragment_to_cartFragment)
+                            }
 
 
         val headToolbar = binding.appBarMain.toolbar
