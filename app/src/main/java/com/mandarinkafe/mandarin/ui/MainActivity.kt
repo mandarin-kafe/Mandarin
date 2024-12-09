@@ -12,9 +12,11 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import androidx.core.content.ContextCompat
+import androidx.navigation.fragment.findNavController
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.databinding.ActivityMainBinding
 import com.mandarinkafe.mandarin.ui.cart.CartFragment
+import com.mandarinkafe.mandarin.ui.meal_details.MealDetailsFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,12 +49,9 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         binding.appBarMain.btCart.setOnClickListener {
-            val cartFragment = CartFragment()
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.container_view,cartFragment)
-                .addToBackStack(null)
-                .commit()
-        }
+            navController.navigate(
+                R.id.action_menuFragment_to_cartFragment)
+                            }
 
 
         val headToolbar = binding.appBarMain.toolbar
