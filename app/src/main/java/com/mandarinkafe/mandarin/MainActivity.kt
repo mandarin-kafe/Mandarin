@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity() {
         initializeUI()
     }
 
+
     private fun initializeUI() {
         setSupportActionBar(binding.appBarMain.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)

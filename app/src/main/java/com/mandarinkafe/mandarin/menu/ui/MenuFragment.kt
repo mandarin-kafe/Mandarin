@@ -24,7 +24,7 @@ import com.mandarinkafe.mandarin.meal_details.ui.MealDetailsFragment
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MenuCategory
 import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
-import com.mandarinkafe.mandarin.menu.ui.MenuViewModel.MenuScreenState
+
 
 class MenuFragment : Fragment() {
 

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Мандарин</string>
     <string name="search_in_menu">Поиск по меню</string>
-    <string name="search_field_icon"> Поле поиска</string>
+    <string name="search_field_icon">Поле поиска</string>
     <string name="clear_text">Очистить текст</string>
     <string name="add_to_cart">Добавить в корзину</string>
     <string name="network_error">Загрузка не удалась. Проверьте подключение к интернету</string>
@@ -34,8 +34,6 @@
     <string name="meal_weight_template">%1$d г</string>
     <string name="meal_price_template">%1$d ₽</string>
     <string name="meal_title_with_weight_template">%1$s, %2$d г</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="pizza_additionals">ДОБАВКИ К ПИЦЦЕ</string>
+
 
 </resources>
