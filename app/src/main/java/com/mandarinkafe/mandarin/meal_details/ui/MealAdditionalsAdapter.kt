@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.ui.meal_details
+package com.mandarinkafe.mandarin.meal_details.ui
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.databinding.ListAdditionalsItemBinding
-import com.mandarinkafe.mandarin.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.domain.models.Meal
 
 class MealAdditionalsAdapter(
     private val additionals: ArrayList<Meal>,

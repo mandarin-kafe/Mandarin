@@ -1,7 +1,7 @@
-package com.mandarinkafe.mandarin.ui.meal_details
+package com.mandarinkafe.mandarin.meal_details.ui
 
 import androidx.lifecycle.ViewModel
-import com.mandarinkafe.mandarin.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.domain.models.Meal
 
 class MealDetailsViewModel : ViewModel(){
 

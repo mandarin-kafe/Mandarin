@@ -1,19 +1,18 @@
-package com.mandarinkafe.mandarin.ui.cart
+package com.mandarinkafe.mandarin.cart
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.databinding.FragmentCartBinding
-import com.mandarinkafe.mandarin.domain.models.Meal
-import com.mandarinkafe.mandarin.domain.models.mockPizzaList
+import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.domain.models.mockPizzaList
 
 
 class CartFragment : Fragment() {

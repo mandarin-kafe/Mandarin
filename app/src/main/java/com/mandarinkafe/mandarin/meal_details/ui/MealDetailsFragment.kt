@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.ui.meal_details
+package com.mandarinkafe.mandarin.meal_details.ui
 
 import android.os.Bundle
 import android.util.Log
@@ -17,8 +17,8 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.databinding.FragmentMealDetailsBinding
-import com.mandarinkafe.mandarin.domain.models.Meal
-import com.mandarinkafe.mandarin.domain.models.mockAdditionalsList
+import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.domain.models.mockAdditionalsList
 
 
 class MealDetailsFragment : Fragment() {
@@ -120,7 +120,8 @@ class MealDetailsFragment : Fragment() {
     private fun setupRecyclerView() {
         val recyclerView = binding.rvAdds
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = MealAdditionalsAdapter(mockAdditionalsList,
+        recyclerView.adapter = MealAdditionalsAdapter(
+            mockAdditionalsList,
             object : MealAdditionalsAdapter.AddsClickListener {
 
                 override fun plusToCartClick(additional: Meal) {

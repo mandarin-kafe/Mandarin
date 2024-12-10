@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.ui.menu
+package com.mandarinkafe.mandarin.menu.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -16,15 +16,15 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
+import com.mandarinkafe.mandarin.MainActivity
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.cart.Cart
 import com.mandarinkafe.mandarin.databinding.FragmentMenuBinding
-import com.mandarinkafe.mandarin.domain.models.Meal
-import com.mandarinkafe.mandarin.domain.models.MenuCategory
-import com.mandarinkafe.mandarin.domain.models.MenuItem
-import com.mandarinkafe.mandarin.ui.MainActivity
-import com.mandarinkafe.mandarin.ui.cart.Cart
-import com.mandarinkafe.mandarin.ui.meal_details.MealDetailsFragment
-import com.mandarinkafe.mandarin.ui.menu.MenuViewModel.MenuScreenState
+import com.mandarinkafe.mandarin.meal_details.ui.MealDetailsFragment
+import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.domain.models.MenuCategory
+import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
+import com.mandarinkafe.mandarin.menu.ui.MenuViewModel.MenuScreenState
 
 class MenuFragment : Fragment() {
 

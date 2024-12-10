@@ -1,12 +1,12 @@
-package com.mandarinkafe.mandarin.ui.menu
+package com.mandarinkafe.mandarin.menu.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.mandarinkafe.mandarin.domain.models.Meal
-import com.mandarinkafe.mandarin.domain.models.MenuCategory
-import com.mandarinkafe.mandarin.domain.models.MenuItem
-import com.mandarinkafe.mandarin.domain.models.mockMenuData
+import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.domain.models.MenuCategory
+import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
+import com.mandarinkafe.mandarin.menu.domain.models.mockMenuData
 
 class MenuViewModel(
 

@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.ui.menu
+package com.mandarinkafe.mandarin.menu.ui
 
 import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
@@ -14,8 +14,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.databinding.ListMenuItemBinding
-import com.mandarinkafe.mandarin.domain.models.Meal
-import com.mandarinkafe.mandarin.domain.models.MenuItem
+import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 
 
 class MenuAdapter(

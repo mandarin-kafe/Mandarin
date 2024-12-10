@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.domain.models
+package com.mandarinkafe.mandarin.menu.domain.models
 
 sealed class MenuItem {
     data class Header(val categoryName: String) : MenuItem()
