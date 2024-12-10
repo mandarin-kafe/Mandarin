@@ -2,6 +2,7 @@ package com.mandarinkafe.mandarin.ui
 
 import android.os.Bundle
 import android.view.View
+
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -64,6 +65,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 else -> {
                     headToolbar.visibility = View.VISIBLE
+
                     window.statusBarColor = ContextCompat.getColor(this, R.color.default_status_bar_color)
                 }
             }

@@ -21,7 +21,6 @@ import com.mandarinkafe.mandarin.databinding.FragmentMenuBinding
 import com.mandarinkafe.mandarin.domain.models.Meal
 import com.mandarinkafe.mandarin.domain.models.MenuCategory
 import com.mandarinkafe.mandarin.domain.models.MenuItem
-import com.mandarinkafe.mandarin.domain.models.mockMenuData
 import com.mandarinkafe.mandarin.ui.MainActivity
 import com.mandarinkafe.mandarin.ui.cart.Cart
 import com.mandarinkafe.mandarin.ui.meal_details.MealDetailsFragment
@@ -77,7 +76,7 @@ class MenuFragment : Fragment() {
         super.onResume()
 
         val tabLayoutMain = binding.tabLayoutCategories
-        val tabLayoutSub =binding.tabLayoutSubCategories
+        val tabLayoutSub = binding.tabLayoutSubCategories
 
         for (i in 0 until tabLayoutMain.tabCount) {
             val tab = tabLayoutMain.getTabAt(i)
@@ -97,7 +96,7 @@ class MenuFragment : Fragment() {
 
     private fun setTabs(menuCategories: ArrayList<MenuCategory>) {
         menuCategories.forEach { category ->
-            val tab =  binding.tabLayoutCategories.newTab().setText(category.name)
+            val tab = binding.tabLayoutCategories.newTab().setText(category.name)
             when (category.name.lowercase()) {
                 "пицца" -> tab.setIcon(R.drawable.pizza)
                 "суши и роллы" -> tab.setIcon(R.drawable.sushi)
@@ -119,7 +118,8 @@ class MenuFragment : Fragment() {
             "DEBUG",
             "Вызов метода addOnTabSelectedListener для усановки OnTabSelectedListener"
         )
-        binding.tabLayoutCategories.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        binding.tabLayoutCategories.addOnTabSelectedListener(object :
+            TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (tab != null) {
                     Log.d(
@@ -173,10 +173,10 @@ class MenuFragment : Fragment() {
                         if (categoryName != null) {
                             val headerIndex =
                                 menuCategories.indexOfFirst { it.name == categoryName }
-                            if (headerIndex != -1 && headerIndex !=  binding.tabLayoutCategories.selectedTabPosition) {
+                            if (headerIndex != -1 && headerIndex != binding.tabLayoutCategories.selectedTabPosition) {
                                 isTabSyncing = true
 
-                                val tab =  binding.tabLayoutCategories.getTabAt(headerIndex)
+                                val tab = binding.tabLayoutCategories.getTabAt(headerIndex)
                                 tab?.select()
                                 isTabSyncing = false
                             }
@@ -204,12 +204,12 @@ class MenuFragment : Fragment() {
                 setSubTabs(menuSubCategoriesSushi)
             }
 
-            else -> binding.tabLayoutSubCategories .isVisible = false
+            else -> binding.tabLayoutSubCategories.isVisible = false
         }
     }
 
     private fun setSubTabs(subCategories: ArrayList<String>) {
-        val tabLayoutSub =binding.tabLayoutSubCategories
+        val tabLayoutSub = binding.tabLayoutSubCategories
         tabLayoutSub.removeAllTabs()
 
         if (subCategories.isEmpty()) {
@@ -242,7 +242,7 @@ class MenuFragment : Fragment() {
             it is MenuItem.Header && it.categoryName == menuCategories[position].name
         }
         if (headerPosition != -1) {
-            val layoutManager =  binding.rvMenu.layoutManager as LinearLayoutManager
+            val layoutManager = binding.rvMenu.layoutManager as LinearLayoutManager
             val offset = resources.getDimensionPixelSize(R.dimen.recycler_view_offset_1)
             layoutManager.scrollToPositionWithOffset(headerPosition, offset)
         }
@@ -274,7 +274,7 @@ class MenuFragment : Fragment() {
                 addOnTabSelectedListener(state.menuCategories, state.menuItems)
                 setRvAdapter(state.menuItems)
 
-                val defaultTab =  binding.tabLayoutCategories.getTabAt(0)
+                val defaultTab = binding.tabLayoutCategories.getTabAt(0)
                 if (defaultTab != null) {
                     subTabsManager(defaultTab.text.toString())
                     Log.d(
@@ -303,11 +303,6 @@ class MenuFragment : Fragment() {
 
                 override fun onEditClick(meal: Meal) {
                     showMealDetails(meal)
-                    Toast.makeText(
-                        requireContext(),
-                        "Тык на кнопку редактирования: ${meal.name}",
-                        Toast.LENGTH_SHORT
-                    ).show()
                 }
 
                 override fun onFavoriteToggleClick(meal: Meal) {
@@ -320,25 +315,17 @@ class MenuFragment : Fragment() {
                 }
 
                 override fun onAddToCartClick(meal: Meal) {
-                    //TODO("Not yet implemented")
                     Cart.addItem(meal)
-                    Toast.makeText(
-                        requireContext(),
-                        "Добавляю в корзину 1 ${meal.name}",
-                        Toast.LENGTH_SHORT
-                    ).show()
                     (requireActivity() as MainActivity).updateCartAdapter()
                 }
 
                 override fun plusToCartClick(meal: Meal) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Тык на плюсик: ${meal.name}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Cart.addItem(meal)
+                    (requireActivity() as MainActivity).updateCartAdapter()
                 }
 
                 override fun minusToCartClick(meal: Meal) {
+                    //TODO тут нужен ещё метод корзины на минус
                     Toast.makeText(
                         requireContext(),
                         "Тык на минус: ${meal.name}",

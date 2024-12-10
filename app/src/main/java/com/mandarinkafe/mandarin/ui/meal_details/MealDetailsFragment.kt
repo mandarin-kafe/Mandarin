@@ -1,6 +1,7 @@
 package com.mandarinkafe.mandarin.ui.meal_details
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +11,7 @@ import androidx.core.bundle.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
@@ -24,8 +25,6 @@ class MealDetailsFragment : Fragment() {
     private val gson: Gson by lazy { Gson() }
     private var _binding: FragmentMealDetailsBinding? = null
     private val binding get() = _binding!!
-
-
     private val viewModel: MealDetailsViewModel by viewModels()
     private val meal by lazy {
         gson.fromJson(
@@ -33,6 +32,12 @@ class MealDetailsFragment : Fragment() {
             Meal::class.java
         )
     }
+    private var mealPrice = 0
+
+    private var addsCategoriesPizza = arrayListOf<String>(
+        "МЯСО", "СЫР", "ОВОЩИ", "РЫБА И МОРЕПРОДУКТЫ"
+    )
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,15 +52,19 @@ class MealDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         setMealData()
+        setTabs(addsCategoriesPizza)
     }
 
     private fun setMealData() {
         val cornerRadius =
             resources.getDimensionPixelSize(R.dimen.image_corner_radius_2)
+        mealPrice = meal.price
         binding.apply {
-            tvMealTitle.text = meal.name
+            tvMealTitleTop.text = meal.name
             tvMealIngredients.text = meal.description
             tvMealWeight.text = getString(R.string.meal_weight_template, meal.weight)
+            tvMealPriceOriginal.text = getString(R.string.meal_price_template, meal.price)
+
 
             Glide.with(requireContext())
                 .load(meal.imageUrl)
@@ -64,7 +73,12 @@ class MealDetailsFragment : Fragment() {
                 .placeholder(R.drawable.ic_cover_placeholder)
                 .into(ivMealPicture)
 
-            fabAddToCartPrice.text = getString(R.string.meal_price_template, meal.price)
+            fabAddToCartPrice.text = getString(
+                R.string.meal_price_template,
+                mealPrice
+            )
+
+
             ivMealPicture.animation = AnimationUtils.loadAnimation(context, R.anim.fade_in)
             ivMealPicture.animate()
 
@@ -84,7 +98,6 @@ class MealDetailsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-
     }
 
     private fun onCartButtonClick() {
@@ -105,9 +118,40 @@ class MealDetailsFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        val recyclerView = binding.rvAdditionals
-        recyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
-        recyclerView.adapter = MealDetailsAdapter(mockAdditionalsList)
+        val recyclerView = binding.rvAdds
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = MealAdditionalsAdapter(mockAdditionalsList,
+            object : MealAdditionalsAdapter.AddsClickListener {
+
+                override fun plusToCartClick(additional: Meal) {
+                    //TODO сделать логику корзины для добавок к блюду
+                    mealPrice += additional.price
+                    binding.fabAddToCartPrice.text =
+                        getString(R.string.meal_price_template, mealPrice)
+
+                }
+
+                override fun minusToCartClick(additional: Meal) {
+                    //TODO сделать логику корзины для добавок к блюду
+                    mealPrice -= additional.price
+                    binding.fabAddToCartPrice.text =
+                        getString(R.string.meal_price_template, mealPrice)
+                }
+            })
+    }
+
+    private fun setTabs(addsCategories: ArrayList<String>) {
+        val tabLayout = binding.tabLayoutAddsCategories
+
+        if (addsCategories.isEmpty()) {
+            Log.e("DEBUG", "Список подкатегорий пуст!")
+            return
+        }
+        addsCategories.forEach { addsCategory ->
+            tabLayout.addTab(tabLayout.newTab().setText(addsCategory))
+        }
+
+
     }
 
     companion object {
