@@ -54,6 +54,8 @@ class MenuFragment : Fragment() {
         "Горячие роллы", "Онигири", "Сеты"
     )
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -70,6 +72,9 @@ class MenuFragment : Fragment() {
 
         { state -> renderMenuScreen(state) }
 
+        binding.ivBanner.setOnClickListener{
+            findNavController().navigate(R.id.action_menuFragment_to_deliveryFragment)
+        }
     }
 
     override fun onResume() {

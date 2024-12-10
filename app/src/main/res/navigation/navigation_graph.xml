@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_menuFragment_to_cartFragment"
             app:destination="@id/cartFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_deliveryFragment"
+            app:destination="@id/deliveryFragment" />
     </fragment>
     <fragment
         android:id="@+id/cartFragment"
@@ -34,6 +37,15 @@
         tools:layout="@layout/fragment_meal_details" >
         <action
             android:id="@+id/action_mealDetails_to_cartFragment"
+            app:destination="@id/cartFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/deliveryFragment"
+        android:name="com.mandarinkafe.mandarin.delivery.DeliveryFragment"
+        android:label="fragment_delivery"
+        tools:layout="@layout/fragment_delivery" >
+        <action
+            android:id="@+id/action_deliveryFragment_to_cartFragment"
             app:destination="@id/cartFragment" />
     </fragment>
 
