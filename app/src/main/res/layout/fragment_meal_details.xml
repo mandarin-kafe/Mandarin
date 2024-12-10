@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.meal_details.MealDetailsFragment">
-
+    tools:context=".meal_details.ui.MealDetailsFragment">
 
     <ImageView
         android:layout_width="match_parent"
@@ -19,8 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="@android:color/transparent"
-        android:paddingHorizontal="0dp"
- >
+        android:paddingHorizontal="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -30,7 +28,7 @@
             android:orientation="horizontal"
             android:padding="8dp">
 
-            <!-- Левая кнопка -->
+            <!-- Кнопка назад -->
             <ImageButton
                 android:id="@+id/ib_back"
                 android:layout_width="wrap_content"
@@ -49,7 +47,7 @@
 
             <!-- Текст по центру -->
             <TextView
-                android:id="@+id/tv_meal_title"
+                android:id="@+id/tv_meal_title_top"
                 style="@style/RegularTextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -57,9 +55,9 @@
                 android:ellipsize="end"
                 android:gravity="center"
                 android:maxLines="1"
-                android:textStyle="bold"
                 android:textColor="@color/black"
                 android:textSize="18sp"
+                android:textStyle="bold"
                 tools:text="Маргарита" />
 
             <!-- Пустое пространство -->
@@ -96,18 +94,18 @@
             android:layout_marginTop="@dimen/dr_cursor_wight_1"
             android:orientation="vertical">
 
-
             <!-- Изображение блюда -->
             <ImageView
                 android:id="@+id/iv_meal_picture"
-                android:layout_width="@dimen/mealdetails_image_width_250"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/mealdetails_image_width_250"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/standart_margin_16"
                 android:layout_marginBottom="@dimen/big_margin_32"
                 android:adjustViewBounds="true"
+
                 android:contentDescription="@null"
-                                tools:srcCompat="@tools:sample/avatars" />
+                tools:srcCompat="@tools:sample/avatars" />
 
             <!-- Ингредиенты -->
             <TextView
@@ -116,37 +114,71 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="@dimen/small_margin_8"
-
+                android:background="@color/app_black_transparent_50"
                 tools:text="Моцарелла, сливочно-чесночный соус, шампиньоны, вяленые томаты, сливочно-чесночный соус, шампиньоны, вяленые томаты, сливочно-чесночный соус, шампиньоны, вяленые томаты" />
 
-            <!-- Вес -->
-            <TextView
-                android:id="@+id/tv_meal_weight"
-                style="@style/RegularTextStyle"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginTop="@dimen/small_margin_8"
-                android:ellipsize="end"
+                android:background="@color/app_black_transparent_50"
+                android:orientation="horizontal"
+                android:padding="@dimen/small_margin_8">
+                <!-- Вес -->
+                <TextView
+                    android:id="@+id/tv_meal_weight"
+                    style="@style/RegularTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:textColor="@color/grey"
+                    tools:text="670г" />
 
+                <!-- Пустое пространство -->
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent" />
+
+                <!-- Цена без добавок -->
+                <TextView
+                    android:id="@+id/tv_meal_price_original"
+                    style="@style/RegularTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    tools:text="985 ₽" />
+
+            </LinearLayout>
+
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayout_adds_categories"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="0dp"
+                android:background="@color/app_black_transparent_50"
                 android:paddingHorizontal="@dimen/small_margin_8"
-                tools:text="670г" />
-
+                android:paddingVertical="@dimen/standart_margin_16"
+                android:visibility="visible"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:tabIndicatorHeight="0dp"
+                app:tabMode="scrollable"
+                app:tabRippleColor="@android:color/transparent"
+                app:tabSelectedTextColor="@color/orange"
+                app:tabTextColor="@color/white" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_additionals"
+                android:id="@+id/rv_adds"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/small_margin_8"
                 android:background="@color/app_black_transparent_50"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                android:padding="@dimen/small_margin_8"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                tools:itemCount="16"
-                tools:listitem="@layout/list_additionals_item"
-                tools:spanCount="3" />
-
-            <!-- Кнопка добавления в корзину должна быть зафиксирована к нижнему краю экрана и видна всегда -->
+                tools:itemCount="5"
+                tools:listitem="@layout/list_additionals_item" />
 
 
         </LinearLayout>
@@ -155,14 +187,17 @@
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fab_add_to_cart_price"
         style="@style/CartButtonStyle"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="@dimen/meal_details__cart_button_56"
         android:layout_gravity="bottom|center_horizontal"
-        app:iconGravity="textStart"
+        android:layout_margin="@dimen/small_margin_8"
+        android:elevation="@dimen/small_margin_8"
+        android:text="@string/default_price_for_button"
         app:icon="@drawable/ic_cart"
+        app:iconGravity="textStart"
+
         app:iconTint="@color/white"
-        app:layout_anchorGravity="bottom|center_horizontal"
-        android:text="@string/default_price_for_button" />
+        app:layout_anchorGravity="bottom|center_horizontal" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

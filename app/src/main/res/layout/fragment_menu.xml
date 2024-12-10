@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingHorizontal="@dimen/small_margin_8"
-    tools:context=".ui.menu.MenuFragment">
+    tools:context=".menu.ui.MenuFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"

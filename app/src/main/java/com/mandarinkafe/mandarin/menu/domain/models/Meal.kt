@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.domain.models
+package com.mandarinkafe.mandarin.menu.domain.models
 
 data class Meal(
     val id: String,                // Уникальный идентификатор блюда

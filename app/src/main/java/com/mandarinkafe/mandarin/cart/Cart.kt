@@ -1,7 +1,6 @@
-package com.mandarinkafe.mandarin.ui.cart
+package com.mandarinkafe.mandarin.cart
 
-import android.util.Log
-import com.mandarinkafe.mandarin.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.domain.models.Meal
 
 object Cart {
     val items: MutableList<Meal> = mutableListOf()

@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.ui
+package com.mandarinkafe.mandarin
 
 import android.os.Bundle
 import android.view.View
@@ -10,9 +10,8 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.cart.CartFragment
 import com.mandarinkafe.mandarin.databinding.ActivityMainBinding
-import com.mandarinkafe.mandarin.ui.cart.CartFragment
 
 
 class MainActivity : AppCompatActivity() {
@@ -32,6 +31,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         initializeUI()
     }
+
 
     private fun initializeUI() {
         setSupportActionBar(binding.appBarMain.toolbar)
@@ -64,6 +64,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 else -> {
                     headToolbar.visibility = View.VISIBLE
+
                     window.statusBarColor = ContextCompat.getColor(this, R.color.default_status_bar_color)
                 }
             }

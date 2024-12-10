@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.domain.models
+package com.mandarinkafe.mandarin.menu.domain.models
 
 data class MenuCategory(
     val name: String,

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/menuFragment"
-        android:name="com.mandarinkafe.mandarin.ui.menu.MenuFragment"
+        android:name="com.mandarinkafe.mandarin.menu.ui.MenuFragment"
         android:label="fragment_menu"
 
         tools:layout="@layout/fragment_menu"> 
@@ -22,14 +22,14 @@
     </fragment>
     <fragment
         android:id="@+id/cartFragment"
-        android:name="com.mandarinkafe.mandarin.ui.cart.CartFragment"
+        android:name="com.mandarinkafe.mandarin.cart.CartFragment"
         android:label="fragment_cart"
         tools:layout="@layout/fragment_cart" />
 
     
     <fragment
         android:id="@+id/mealDetails"
-        android:name="com.mandarinkafe.mandarin.ui.meal_details.MealDetailsFragment"
+        android:name="com.mandarinkafe.mandarin.meal_details.ui.MealDetailsFragment"
         android:label="fragment_meal_details"
         tools:layout="@layout/fragment_meal_details" >
         <action

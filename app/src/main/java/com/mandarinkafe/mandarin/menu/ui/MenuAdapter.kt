@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.ui.menu
+package com.mandarinkafe.mandarin.menu.ui
 
 import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
@@ -14,8 +14,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.databinding.ListMenuItemBinding
-import com.mandarinkafe.mandarin.domain.models.Meal
-import com.mandarinkafe.mandarin.domain.models.MenuItem
+import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 
 
 class MenuAdapter(
@@ -57,18 +57,10 @@ class MenuAdapter(
             is MenuItem.Header -> (holder as HeaderViewHolder).bind(item)
             is MenuItem.MealItem -> {
                 (holder as MealViewHolder).bind(item.meal)
-                // TODO Установку OnClickListener можно вынести из Холдера сюда, тогда можно будет использовать clickDebounce,
-                // ну и не придётся передавать в Холдер обьект clickListener.
-
             }
         }
     }
 
-    private fun onMealClickListener(meal: Meal) {
-        if (clickDebounce()) {
-            clickListener.onMealClick(meal)
-        }
-    }
 
     private fun clickDebounce(): Boolean {
         val current = isClickAllowed
@@ -96,8 +88,7 @@ class MenuAdapter(
     ) :
         RecyclerView.ViewHolder(parentView) {
         private val binding = ListMenuItemBinding.bind(parentView)
-        private var numberInCart = 0 // TODO временная переменная! брать цифру из логики корзины
-        // Потом брать эту цифру из логики корзины, а то Холдер одну и ту же переменную привязывает к разным товарам
+        private var numberInCart = 0 // TODO временная переменная! брать цифру из логики корзины, а то холдер одну и ту же переменную привязывает к разным товарам
 
         private val cornerRadius =
             this@MealViewHolder.parentView.resources.getDimensionPixelSize(R.dimen.image_corner_radius_2)

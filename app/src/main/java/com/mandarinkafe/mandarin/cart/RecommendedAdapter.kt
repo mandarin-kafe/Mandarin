@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.ui.cart
+package com.mandarinkafe.mandarin.cart
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,9 +9,9 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.databinding.RecommendItemBinding
 
-import com.mandarinkafe.mandarin.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.domain.models.Meal
 
-class RecommendedAdapter(private val recommendedItems: List<Meal>,private val onItemClicked: (Meal) -> Unit) : RecyclerView.Adapter<RecommendedAdapter.RecommendedViewHolder>() {
+class RecommendedAdapter(private val recommendedItems: List<Meal>, private val onItemClicked: (Meal) -> Unit) : RecyclerView.Adapter<RecommendedAdapter.RecommendedViewHolder>() {
 
     class RecommendedViewHolder(item: View) : RecyclerView.ViewHolder(item) {
         val binding = RecommendItemBinding.bind(item)

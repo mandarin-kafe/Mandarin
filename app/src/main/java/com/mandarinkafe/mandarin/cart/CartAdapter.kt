@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.ui.cart
+package com.mandarinkafe.mandarin.cart
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.databinding.ItemCartBinding
-import com.mandarinkafe.mandarin.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.domain.models.Meal
 
 class CartAdapter(private val items: List<Meal>) : RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
 
