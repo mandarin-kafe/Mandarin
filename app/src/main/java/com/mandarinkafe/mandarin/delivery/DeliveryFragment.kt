@@ -25,10 +25,6 @@ class DeliveryFragment : Fragment() {
     private var _binding: FragmentDeliveryBinding? = null
     private val binding get() = _binding!!
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        authenticate()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,20 +34,39 @@ class DeliveryFragment : Fragment() {
         return binding.root
     }
 
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        prepareApi()
+    }
+
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 
 
+    private val ikkoBaseUrl = "https://api-ru.iiko.services"
+    var token = ""
+    var organizationId = ""
+
     val ikkoService: IkkoApiService = Retrofit.Builder()
-        .baseUrl("https://api-ru.iiko.services")
+        .baseUrl(ikkoBaseUrl)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
         .create(
             IkkoApiService::
             class.java
         )
+
+
+    private fun prepareApi() {
+        if (token.isNotEmpty() && organizationId.isNotEmpty()) {
+            menuRequest(token, IkkoMenuRequest(organizationId = organizationId))
+        } else
+            authenticate()
+    }
 
 
     private fun authenticate() {
@@ -64,14 +79,14 @@ class DeliveryFragment : Fragment() {
                     response: Response<IkkoAuthResponse>
                 ) {
                     if (response.code() == 200) {
-                        val token = response.body()?.token.toString()
+                        token = response.body()?.token.toString()
                         binding.tvToken.text = token
                         Log.d("DEBUG", "token = $token")
                         getOrganizations(token)
                     } else {
                         Toast.makeText(
                             requireContext(),
-                            "Ошибка запрроса авторизации, Код ошибки: ${response.code()}",
+                            "Ошибка запроса авторизации, Код ошибки: ${response.code()}",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -102,19 +117,11 @@ class DeliveryFragment : Fragment() {
                         val organizations = response.body()?.organizations
                         if (!organizations.isNullOrEmpty()) {
 
-                            val cafeId =
+                            organizationId =
                                 organizations[0].id       // Извлекаем id первого кафе и сохраняем в переменную
-                            binding.tvRests.text = cafeId
-                            Log.d("DEBUG", "cafeId = $cafeId")
-
-                            Toast.makeText(
-                                requireContext(),
-                                "ID кафе: $cafeId",
-                                Toast.LENGTH_SHORT
-                            ).show()
-
-                            menuRequest(token, IkkoMenuRequest(organizationId = cafeId))
-
+                            binding.tvRests.text = organizationId
+                            Log.d("DEBUG", "organizationId = $organizationId")
+                            menuRequest(token, IkkoMenuRequest(organizationId = organizationId))
 
                         } else {
                             Toast.makeText(
@@ -131,42 +138,7 @@ class DeliveryFragment : Fragment() {
                         ).show()
                     }
                 }
-private fun menuRequest(token: String, requestBody: IkkoMenuRequest) {
-          ikkoService.getMenu(
-            "Bearer $token", // Авторизация
-            requestBody       // JSON-тело
-        ).enqueue(object : Callback<IkkoMenuResponse> {
-            override fun onResponse(
-                call: Call<IkkoMenuResponse>,
-                response: Response<IkkoMenuResponse>
-            ) {
-                if (response.isSuccessful) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Запрос успешен: ${response.body()}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    binding.tvMenu.text = response.body().toString()
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Ошибка выполнения запроса. Код ошибки: ${response.code()}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
 
-            override fun onFailure(call: Call<IkkoMenuResponse>, t: Throwable) {
-                Toast.makeText(
-                    requireContext(),
-                    "Ошибка выполнения запроса: ${t.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        })
-
-
-}
 
                 override fun onFailure(p0: Call<IkkoOrganizationsResponse>, p1: Throwable) {
                     Toast.makeText(
@@ -179,6 +151,43 @@ private fun menuRequest(token: String, requestBody: IkkoMenuRequest) {
             })
     }
 
+    private fun menuRequest(token: String, requestBody: IkkoMenuRequest) {
+        ikkoService.getMenu(
+            "Bearer $token", // Авторизация
+            requestBody       // JSON-тело
+        ).enqueue(object : Callback<IkkoMenuResponse> {
+            override fun onResponse(
+                call: Call<IkkoMenuResponse>,
+                response: Response<IkkoMenuResponse>
+            ) {
+                if (response.isSuccessful) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Запрос меню успешен!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    binding.tvMenu.text = response.body().toString()
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Ошибка выполнения запроса. Код ошибки: ${response.code()}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    Log.d("API DEBUG", "${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<IkkoMenuResponse>, t: Throwable) {
+                Toast.makeText(
+                    requireContext(),
+                    "onFailure. Ошибка выполнения запроса: ${t.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                Log.d("API DEBUG", "${t.message}")
+            }
+        })
+    }
 
 }
 
