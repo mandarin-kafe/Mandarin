@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         binding.appBarMain.btCart.setOnClickListener {
             navController.navigate(
-                R.id.action_menuFragment_to_cartFragment)
+                R.id.cartFragment)
                             }
 
 
