@@ -1,4 +1,4 @@
-
+package com.mandarinkafe.mandarin.menu.data.network
 import com.mandarinkafe.mandarin.menu.data.dto.IkkoAuthRequest
 import com.mandarinkafe.mandarin.menu.data.dto.IkkoAuthResponse
 import com.mandarinkafe.mandarin.menu.data.dto.IkkoMenuRequest

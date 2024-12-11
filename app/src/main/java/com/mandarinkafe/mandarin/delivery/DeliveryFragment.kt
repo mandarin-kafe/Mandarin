@@ -1,6 +1,5 @@
 package com.mandarinkafe.mandarin.delivery
 
-import IkkoApiService
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,6 +13,7 @@ import com.mandarinkafe.mandarin.menu.data.dto.IkkoAuthResponse
 import com.mandarinkafe.mandarin.menu.data.dto.IkkoMenuRequest
 import com.mandarinkafe.mandarin.menu.data.dto.IkkoMenuResponse
 import com.mandarinkafe.mandarin.menu.data.dto.IkkoOrganizationsResponse
+import com.mandarinkafe.mandarin.menu.data.network.IkkoApiService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -23,7 +23,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class DeliveryFragment : Fragment() {
     private var _binding: FragmentDeliveryBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = requireNotNull(_binding) { "Binding wasn't initialized" }
 
 
     override fun onCreateView(
@@ -47,11 +47,15 @@ class DeliveryFragment : Fragment() {
     }
 
 
-    private val ikkoBaseUrl = "https://api-ru.iiko.services"
-    var token = ""
-    var organizationId = ""
 
-    val ikkoService: IkkoApiService = Retrofit.Builder()
+
+    //TODO все сетевые запросы вынести в data слой menu, тут они временно для простоты отладки
+
+    private val ikkoBaseUrl = "https://api-ru.iiko.services"
+    private var token = ""
+    private var organizationId = ""
+
+    private val ikkoService: IkkoApiService = Retrofit.Builder()
         .baseUrl(ikkoBaseUrl)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
@@ -95,7 +99,7 @@ class DeliveryFragment : Fragment() {
                 override fun onFailure(call: Call<IkkoAuthResponse>, t: Throwable) {
                     Toast.makeText(
                         requireContext(),
-                        "Ошибка запроса авторизации, попали в onFailure",
+                        "Ошибка запроса авторизации, попали в onFailure. ${t.message}",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -140,10 +144,10 @@ class DeliveryFragment : Fragment() {
                 }
 
 
-                override fun onFailure(p0: Call<IkkoOrganizationsResponse>, p1: Throwable) {
+                override fun onFailure(call: Call<IkkoOrganizationsResponse>, t: Throwable) {
                     Toast.makeText(
                         requireContext(),
-                        "Ошибка получение кода ресторана, попали в onFailure",
+                        "Ошибка получение кода ресторана, попали в onFailure. ${t.message}",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -188,7 +192,6 @@ class DeliveryFragment : Fragment() {
             }
         })
     }
-
 }
 
 

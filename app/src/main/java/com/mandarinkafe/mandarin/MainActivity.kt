@@ -14,6 +14,7 @@ import com.mandarinkafe.mandarin.cart.CartFragment
 import com.mandarinkafe.mandarin.databinding.ActivityMainBinding
 
 
+
 class MainActivity : AppCompatActivity() {
 
     private var _binding: ActivityMainBinding? = null
@@ -29,7 +30,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         initializeUI()
+
     }
 
 
