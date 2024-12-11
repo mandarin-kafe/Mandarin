@@ -9,7 +9,6 @@ import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.core.bundle.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -19,13 +18,15 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.databinding.FragmentMealDetailsBinding
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.mockAdditionalsList
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.java.KoinJavaComponent.getKoin
 
 
 class MealDetailsFragment : Fragment() {
     private val gson: Gson by lazy { Gson() }
     private var _binding: FragmentMealDetailsBinding? = null
-    private val binding get() = _binding!!
-    private val viewModel: MealDetailsViewModel by viewModels()
+    private val binding get() = requireNotNull(_binding) { "Binding wasn't initialized" }
+    private val viewModel by viewModel<MealDetailsViewModel>()
     private val meal by lazy {
         gson.fromJson(
             requireArguments().getString(MEAL),
@@ -95,10 +96,7 @@ class MealDetailsFragment : Fragment() {
     }
 
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
+
 
     private fun onCartButtonClick() {
         Toast.makeText(
@@ -152,12 +150,16 @@ class MealDetailsFragment : Fragment() {
             tabLayout.addTab(tabLayout.newTab().setText(addsCategory))
         }
 
+    }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {
         const val MEAL = "meal"
-        private val gson = Gson()
+        private val gson: Gson = getKoin().get()
         fun createArgs(meal: Meal): Bundle =
             bundleOf(MEAL to gson.toJson(meal))
     }

@@ -4,13 +4,14 @@ package com.mandarinkafe.mandarin.menu.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.mandarinkafe.mandarin.menu.domain.api.FavoritesInteractor
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MenuCategory
 import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 import com.mandarinkafe.mandarin.menu.domain.models.mockMenuData
 
 
-class MenuViewModel(
+class MenuViewModel(private val favoritesInteractor: FavoritesInteractor
 ) : ViewModel() {
     private var menuState = MutableLiveData<MenuScreenState>(MenuScreenState.Loading)
     private var menuItems = mutableListOf<MenuItem>()
@@ -37,11 +38,11 @@ class MenuViewModel(
 
 
     fun toggleFavorite(meal: Meal) {
-//        if (meal.isFavorite) {
-//            favoritesInteractor.removeFromFavorites(meal)
-//        } else {
-//            favoritesInteractor.addToFavorites(meal)
-//        }
+        if (meal.isFavorite) {
+            favoritesInteractor.removeFromFavorites(meal)
+        } else {
+            favoritesInteractor.addToFavorites(meal)
+        }
         updateMealContent(meal.id, meal.copy(isFavorite = !meal.isFavorite))
 
     }

@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,17 +23,18 @@ import com.mandarinkafe.mandarin.meal_details.ui.MealDetailsFragment
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MenuCategory
 import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class MenuFragment : Fragment() {
 
     private var _binding: FragmentMenuBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = requireNotNull(_binding) { "Binding wasn't initialized" }
 
     private var isClickAllowed = true
     private var isTabSyncing = false
     private val handler = Handler(Looper.getMainLooper())
-    private val viewModel: MenuViewModel by viewModels()
+    private val viewModel by viewModel<MenuViewModel>()
 
     private var menuSubCategoriesPizza = arrayListOf<String>(
         "Классическая",
@@ -54,6 +54,8 @@ class MenuFragment : Fragment() {
         "Горячие роллы", "Онигири", "Сеты"
     )
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -70,6 +72,9 @@ class MenuFragment : Fragment() {
 
         { state -> renderMenuScreen(state) }
 
+        binding.ivBanner.setOnClickListener{
+            findNavController().navigate(R.id.action_menuFragment_to_deliveryFragment)
+        }
     }
 
     override fun onResume() {
@@ -381,6 +386,7 @@ class MenuFragment : Fragment() {
         }
         return current
     }
+
 
     private companion object {
         enum class VisibilityStatus {
