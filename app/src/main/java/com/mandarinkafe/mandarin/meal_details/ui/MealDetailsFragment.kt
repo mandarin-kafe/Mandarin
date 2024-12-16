@@ -19,6 +19,7 @@ import com.mandarinkafe.mandarin.databinding.FragmentMealDetailsBinding
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.mockAdditionalsList
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import org.koin.java.KoinJavaComponent.getKoin
 
 
@@ -26,7 +27,7 @@ class MealDetailsFragment : Fragment() {
     private val gson: Gson by lazy { Gson() }
     private var _binding: FragmentMealDetailsBinding? = null
     private val binding get() = requireNotNull(_binding) { "Binding wasn't initialized" }
-    private val viewModel by viewModel<MealDetailsViewModel>()
+    private val viewModel by viewModel<MealDetailsViewModel> { parametersOf(meal) }
     private val meal by lazy {
         gson.fromJson(
             requireArguments().getString(MEAL),
@@ -54,6 +55,10 @@ class MealDetailsFragment : Fragment() {
         setupRecyclerView()
         setMealData()
         setTabs(addsCategoriesPizza)
+
+        viewModel.getIsFavoriteLiveData().observe(viewLifecycleOwner) { isFavorite ->
+            toggleFavorite(isFavorite)
+        }
     }
 
     private fun setMealData() {
@@ -90,29 +95,40 @@ class MealDetailsFragment : Fragment() {
                 onCartButtonClick()
             }
             ivAddToFavorite.setOnClickListener {
-                onFavoriteToggleClick()
+                viewModel.toggleFavorite()
             }
         }
     }
 
 
 
-
     private fun onCartButtonClick() {
         Toast.makeText(
             requireContext(),
-            "Добавляю в корзину ${meal.name}, ${meal.price} ₽",
+            "Добавляю в корзину ${meal.name}, $mealPrice ₽",
             Toast.LENGTH_SHORT
         ).show()
-    }
+        findNavController().popBackStack()
+            }
 
-    private fun onFavoriteToggleClick() {
-        viewModel.toggleFavorite(meal)
-        Toast.makeText(
-            requireContext(),
-            "Тык на сердечко: ${meal.name}",
-            Toast.LENGTH_SHORT
-        ).show()
+    private fun toggleFavorite(isFavorite: Boolean) {
+        binding.ivAddToFavorite.apply {
+                 animate()
+                .alpha(0f) // Прозрачность 0
+                .setDuration(150)
+                .withEndAction { // Меняем изображение, когда оно исчезнет
+                    setImageResource(
+                        if (isFavorite) R.drawable.ic_favorite_active
+                        else R.drawable.ic_favorite_inactive
+                    )
+                    // Плавно показываем новое изображение
+                    animate()
+                        .alpha(1f) // Прозрачность 1
+                        .setDuration(150)
+                        .start()
+                }
+                .start()
+        }
     }
 
     private fun setupRecyclerView() {

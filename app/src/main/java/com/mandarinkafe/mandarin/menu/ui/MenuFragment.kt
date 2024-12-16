@@ -55,7 +55,6 @@ class MenuFragment : Fragment() {
     )
 
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -72,7 +71,7 @@ class MenuFragment : Fragment() {
 
         { state -> renderMenuScreen(state) }
 
-        binding.ivBanner.setOnClickListener{
+        binding.ivBanner.setOnClickListener {
             findNavController().navigate(R.id.action_menuFragment_to_deliveryFragment)
         }
     }
@@ -298,11 +297,6 @@ class MenuFragment : Fragment() {
                 override fun onMealClick(meal: Meal) {
                     if (clickDebounce()) {
                         if (meal.category == "pizza") showMealDetails(meal)
-                        Toast.makeText(
-                            requireContext(),
-                            "Тык на любую область блюда: ${meal.name}",
-                            Toast.LENGTH_SHORT
-                        ).show()
                     }
                 }
 
@@ -330,12 +324,7 @@ class MenuFragment : Fragment() {
                 }
 
                 override fun minusToCartClick(meal: Meal) {
-                    //TODO тут нужен ещё метод корзины на минус
-                    Toast.makeText(
-                        requireContext(),
-                        "Тык на минус: ${meal.name}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    //TODO тут нужен метод корзины на минус
                 }
             })
         binding.rvMenu.apply {

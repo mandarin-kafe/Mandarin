@@ -11,7 +11,8 @@ import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 import com.mandarinkafe.mandarin.menu.domain.models.mockMenuData
 
 
-class MenuViewModel(private val favoritesInteractor: FavoritesInteractor
+class MenuViewModel(
+    private val favoritesInteractor: FavoritesInteractor
 ) : ViewModel() {
     private var menuState = MutableLiveData<MenuScreenState>(MenuScreenState.Loading)
     private var menuItems = mutableListOf<MenuItem>()
@@ -47,12 +48,20 @@ class MenuViewModel(private val favoritesInteractor: FavoritesInteractor
 
     }
 
-    private fun updateMealContent(movieId: String, newMeal: Meal) {
+    private fun updateMealContent(mealId: String, newMeal: Meal) {
         val currentState = menuState.value
 
-        if (currentState is MenuScreenState.Content) {
-//TODO  за основу можно взять MovieSearcher
-        }
+//        if (currentState is MenuScreenState.Content) {
+//            val movieIndex = currentState.menuItems.indexOfFirst { it.id == mealId }
+//            if (movieIndex != -1) {
+//                menuState.value = MenuScreenState.Content(currentState.menuCategories,
+//                    currentState.menuItems.toMutableList().also {
+//                        it[movieIndex] = newMeal
+//                    }
+//                )
+//            }
+//        }
+
     }
 }
 

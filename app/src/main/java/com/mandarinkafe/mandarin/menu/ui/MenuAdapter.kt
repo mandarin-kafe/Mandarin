@@ -166,18 +166,20 @@ class MenuAdapter(
             when (inCart) {
                 true -> binding.apply {
                     btAddToCartPrice.visibility = View.GONE
-                    btCartMinus.visibility = View.VISIBLE
-                    btCartPlus.visibility = View.VISIBLE
-                    tvNumberInCart.visibility = View.VISIBLE
-                    tvTotalPriceInCart.visibility = View.VISIBLE
+                    groupExtraCartButtons.visibility = View.VISIBLE
+//                    btCartMinus.visibility = View.VISIBLE
+//                    btCartPlus.visibility = View.VISIBLE
+//                    tvNumberInCart.visibility = View.VISIBLE
+//                    tvTotalPriceInCart.visibility = View.VISIBLE
                 }
 
                 false -> binding.apply {
                     btAddToCartPrice.visibility = View.VISIBLE
-                    btCartMinus.visibility = View.GONE
-                    btCartPlus.visibility = View.GONE
-                    tvNumberInCart.visibility = View.GONE
-                    tvTotalPriceInCart.visibility = View.GONE
+                    groupExtraCartButtons.visibility = View.GONE
+//                    btCartMinus.visibility = View.GONE
+//                    btCartPlus.visibility = View.GONE
+//                    tvNumberInCart.visibility = View.GONE
+//                    tvTotalPriceInCart.visibility = View.GONE
                 }
             }
         }
