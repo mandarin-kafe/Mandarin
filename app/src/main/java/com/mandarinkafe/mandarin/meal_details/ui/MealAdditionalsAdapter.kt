@@ -38,10 +38,15 @@ class MealAdditionalsAdapter(
         fun bind(item: Meal) {
             setOnClickListeners(item)
             binding.apply {
-                tvMealTitle.text = item.name + ", " + item.weight.toString() + " г"
-                tvMealPrice.text = item.price.toString() + " ₽"
+                tvMealTitle.text =
+                    itemView.context.getString(
+                        R.string.meal_title_with_weight_template,
+                        item.name,
+                        item.weight
+                    )
 
-
+                tvMealPrice.text =
+                    itemView.context.getString(R.string.meal_price_template, item.price)
             }
         }
 
@@ -49,36 +54,50 @@ class MealAdditionalsAdapter(
 
             btCartMinus.setOnClickListener {
                 clickListener.minusToCartClick(item)
-                tvNumberInCart.text = (--numberInCart).toString() + " шт"
-                tvTotalPriceInCart.text = (item.price * numberInCart).toString() + " ₽"
-                if (numberInCart == 0) {
+
+                tvNumberInCart.text =
+                    itemView.context.getString(
+                        R.string.meal_in_cart_count_template,
+                        --numberInCart
+                    )
+                tvTotalPriceInCart.text =
+                    itemView.context.getString(
+                        R.string.meal_price_template,
+                        item.price * numberInCart
+                    )
+
+                if (numberInCart <= 0) {
                     extraCartButtonsManager(inCart = false)
                 }
             }
             btCartPlus.setOnClickListener {
                 clickListener.plusToCartClick(item)
                 extraCartButtonsManager(inCart = true)
-                tvNumberInCart.text = (++numberInCart).toString() + " шт"
-                tvTotalPriceInCart.text = (item.price * numberInCart).toString() + " ₽"
+                tvNumberInCart.text =
+                    itemView.context.getString(
+                        R.string.meal_in_cart_count_template,
+                        ++numberInCart
+                    )
+
+                tvTotalPriceInCart.text =
+                    itemView.context.getString(
+                        R.string.meal_price_template,
+                        item.price * numberInCart
+                    )
             }
         }
 
         private fun extraCartButtonsManager(inCart: Boolean) {
             when (inCart) {
                 true -> binding.apply {
-                    btCartMinus.visibility = View.VISIBLE
-backgroundForCartInfo.visibility = View.VISIBLE
-                    tvNumberInCart.visibility = View.VISIBLE
-                    tvTotalPriceInCart.visibility = View.VISIBLE
                     tvMealPrice.visibility = View.GONE
+                    groupExtraCartButtons.visibility= View.VISIBLE
+
                 }
 
                 false -> binding.apply {
-                    btCartMinus.visibility = View.GONE
-                    backgroundForCartInfo.visibility = View.GONE
-                    tvNumberInCart.visibility = View.GONE
-                    tvTotalPriceInCart.visibility = View.GONE
                     tvMealPrice.visibility = View.VISIBLE
+                    groupExtraCartButtons.visibility= View.GONE
                 }
             }
         }

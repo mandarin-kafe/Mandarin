@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:animateLayoutChanges="true"
-    android:paddingBottom="@dimen/standart_margin_16">
+     android:paddingBottom="@dimen/standart_margin_16">
 
     <!-- Изображение блюда -->
     <ImageView
@@ -23,10 +23,11 @@
         android:id="@+id/tv_meal_title"
         style="@style/MealTitleStyle"
         android:layout_width="0dp"
+        android:textAllCaps="true"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/small_margin_8"
         android:ellipsize="end"
-        android:maxLines="1"
+        android:maxLines="3"
         android:textSize="@dimen/regular_text_size_16"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/iv_meal_picture"
@@ -37,14 +38,14 @@
     <TextView
         android:id="@+id/tv_meal_ingredients"
         style="@style/MealSmallTextStyle"
+        android:gravity="top"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:ellipsize="end"
-        android:maxLines="3"
-        app:layout_constraintBottom_toTopOf="@id/tv_meal_weight"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintVertical_bias="0.0"
+         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/tv_meal_title"
         app:layout_constraintTop_toBottomOf="@id/tv_meal_title"
+        app:layout_constraintBottom_toTopOf="@id/tv_meal_weight"
         tools:text="Моцарелла, сливочно-чесночный соус, шампиньоны, вяленые томаты, сливочно-чесночный соус, шампиньоны, вяленые томаты, сливочно-чесночный соус, шампиньоны, вяленые томаты" />
 
     <!-- Вес -->
@@ -59,19 +60,6 @@
         app:layout_constraintStart_toStartOf="@id/tv_meal_title"
         tools:text="670г" />
 
-    <!-- Кнопка добавления в корзину -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/bt_add_to_cart_price"
-        style="@style/ToCartButtonStyle"
-        android:layout_width="@dimen/to_cart_button_big_120"
-        android:layout_height="@dimen/to_cart_button_small_48"
-        android:gravity="center"
-        android:visibility="visible"
-        app:icon="@drawable/ic_cart"
-        app:iconTint="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@id/tv_meal_title"
-        tools:text="985 ₽" />
 
     <View
         android:id="@+id/cntr_of_background_bt"
@@ -83,10 +71,9 @@
         app:layout_constraintTop_toTopOf="@id/background_for_cart_info" />
 
 
-    <!-- Появляется только когда блюдо в корзине -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/background_for_cart_info"
-        style="@style/ToCartBackgroundStyle"
+        style="@style/ToCartButtonsBackgroundStyle"
         android:layout_width="@dimen/to_cart_button_big_120"
         android:layout_height="@dimen/to_cart_button_small_48"
           android:clickable="false"
@@ -105,6 +92,20 @@
         app:layout_constraintStart_toEndOf="@id/bt_cart_minus"
         tools:text="2 шт" />
 
+
+    <!-- Кнопка добавления в корзину -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/bt_add_to_cart_price"
+        style="@style/ToCartButtonStyle"
+        android:layout_width="@dimen/to_cart_button_big_120"
+        android:layout_height="@dimen/to_cart_button_small_48"
+        android:gravity="center"
+        android:visibility="visible"
+        app:icon="@drawable/ic_cart"
+        app:iconTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tv_meal_title"
+        tools:text="985 ₽" />
 
     <TextView
         android:id="@+id/tv_total_price_in_cart"

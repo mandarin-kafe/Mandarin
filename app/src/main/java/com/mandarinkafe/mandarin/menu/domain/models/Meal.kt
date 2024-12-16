@@ -434,6 +434,95 @@ var mockSushiList = arrayListOf<Meal>(
     ),
 
     )
+var mockHotDogList = arrayListOf<Meal>(
+    Meal(
+        "41",
+        "ДАТСКИЙ ХОТ-ДОГ",
+        "✓ сосиска на выбор\n" +
+                "✓ булка\n" +
+                "✓ огурцы\n" +
+                "✓ лук фри\n" +
+                "✓ горчица\n" +
+                "✓ кетчуп\n" +
+                "✓ майонезный соус",
+        null,
+        250,
+        "https://optim.tildacdn.com/tild3866-3065-4137-b633-616633396165/-/resize/312x/-/format/webp/datsky_hot-dog_new.jpg",
+        "hotdog",
+        false,
+        true
+    ),
+    Meal(
+        "42",
+        "ФРАНЦУЗСКИЙ ХОТ-ДОГ",
+        "✓ сосиска на выбор\n" +
+                "✓ майонезный соус\n" +
+                "✓ кетчуп\n" +
+                "✓ булка",
+        null,
+        250,
+        "https://optim.tildacdn.com/tild3361-3662-4537-b731-393636653530/-/resize/312x/-/format/webp/francuzsky_hot-dog_n.jpg",
+        "hotdog",
+        false,
+        false
+    ),
+    Meal(
+        "43",
+        "ДОНЕР",
+        "✓ пшеничная тортилья\n" +
+                "✓ мясная начинка или фалафель по выбору\n" +
+                "✓ картофель фри\n" +
+                "✓ огурцы\n" +
+                "✓ помидоры\n" +
+                "✓ соус тартар\n" +
+                "✓ сальса\n" +
+                "✓ сыр моцарелла",
+        null,
+        390,
+        "https://optim.tildacdn.com/tild6261-3063-4939-a162-366337393735/-/resize/312x/-/format/webp/doner_new.jpg",
+        "hotdog",
+        false,
+        true
+    ),
+)
+
+var mockWokList = arrayListOf<Meal>(
+    Meal(
+        "51",
+            "Пшеничная лапша с овощами, курицей, черри, пармезаном в сливочном соусе",
+        "Пшеничная лапша, цукини, морковь, перец болгарский, лук, курица, помидоры черри, пармезан, кунжутное масло, сливочный соус, кунжут",
+        null,
+        450,
+        "https://optim.tildacdn.com/tild3130-6233-4163-a638-373037373032/-/resize/312x/-/format/webp/pshenichnaya_s_kuric.jpg",
+        "wok",
+        false,
+        true
+    ),
+    Meal(
+        "52",
+        "ЖАРЕНЫЙ РИС С ЯЙЦОМ И НАЧИНКОЙ НА ВЫБОР",
+        "Рис, курица / свинина / креветки (на выбор), морковь, чеснок, яйцо, лук порей, кунжутное масло, кунжут, устричный соус, пикантный соус",
+        null,
+        250,
+        "https://optim.tildacdn.com/tild3263-3037-4137-a634-666663333863/-/resize/312x/-/format/webp/ris_s_krevetkami_new.jpg",
+        "wok",
+        false,
+        false
+    ),
+    Meal(
+        "53",
+        "CОБЕРИ СВОЮ КОРОБОЧКУ",
+        "Шаг 1. Выбери основу (в комплекте овощи и соус. Все вместе — 330 г)\n" +
+                "Шаг 2. Добавь мясо, начинку, дополнительный соус по своему вкусу!",
+        null,
+        0,
+        "https://optim.tildacdn.com/tild3866-3065-4137-b633-616633396165/-/resize/312x/-/format/webp/datsky_hot-dog_new.jpg",
+        "wok",
+        false,
+        true
+    ),
+)
+
 
 var mockAdditionalsList = arrayListOf<Meal>(
     Meal(

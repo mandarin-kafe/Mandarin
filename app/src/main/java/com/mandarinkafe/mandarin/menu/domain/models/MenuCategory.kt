@@ -9,8 +9,8 @@ val mockMenuData = arrayListOf<MenuCategory>(
     MenuCategory("ПИЦЦА", mockPizzaList),
     MenuCategory("СУШИ И РОЛЛЫ", mockSushiList),
     MenuCategory("БУРГЕРЫ", mockBurgerList),
-    MenuCategory("ХОТ-ДОГИ И ДОНЕР", arrayListOf()),
-    MenuCategory("WOK", arrayListOf())
+    MenuCategory("ХОТ-ДОГИ И ДОНЕР", mockHotDogList),
+    MenuCategory("WOK", mockWokList)
 
 
 )
