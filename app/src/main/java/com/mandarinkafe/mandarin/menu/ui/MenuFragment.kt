@@ -11,9 +11,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.mandarinkafe.mandarin.MainActivity
 import com.mandarinkafe.mandarin.R
@@ -23,6 +25,11 @@ import com.mandarinkafe.mandarin.meal_details.ui.MealDetailsFragment
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.MenuCategory
 import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
+import com.mandarinkafe.mandarin.menu.domain.models.mockBannersList
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -31,11 +38,17 @@ class MenuFragment : Fragment() {
     private var _binding: FragmentMenuBinding? = null
     private val binding get() = requireNotNull(_binding) { "Binding wasn't initialized" }
 
+    private var _bannersAdapter: BannerAdapter? = null
+    private val bannersAdapter get() = _bannersAdapter!!
+
     private var isClickAllowed = true
     private var isTabSyncing = false
     private val handler = Handler(Looper.getMainLooper())
     private val viewModel by viewModel<MenuViewModel>()
+    private var autoScrollJob: Job? = null
+    private var userInteractingWithViewPager = false
 
+    private val banners = mockBannersList
     private var menuSubCategoriesPizza = arrayListOf<String>(
         "Классическая",
         "Римская",
@@ -55,6 +68,20 @@ class MenuFragment : Fragment() {
     )
 
 
+    private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageScrollStateChanged(state: Int) {
+            super.onPageScrollStateChanged(state)
+            // Если пользователь начал взаимодействовать с ViewPager2
+            when (state) {
+                ViewPager2.SCROLL_STATE_DRAGGING -> {
+                    userInteractingWithViewPager = true
+                    Log.d("DEBUG ViewPager","SCROLL_STATE_DRAGGING")
+                    //TODO добавить сюда дебаунс автопрокрутки (запуск через 5 сек после прекращения взаимодействия)
+                }
+            }
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -71,10 +98,46 @@ class MenuFragment : Fragment() {
 
         { state -> renderMenuScreen(state) }
 
-        binding.ivBanner.setOnClickListener {
-            findNavController().navigate(R.id.action_menuFragment_to_deliveryFragment)
+              binding.viewPagerBanners.registerOnPageChangeCallback(pageChangeCallback)
+//        Убрала пока dotsIndicator, поскольку он криво отображается в CoordinatorLayout
+//        val dotsIndicator = binding.dotsIndicator
+//        dotsIndicator.setViewPager(binding.viewPagerBanners)
+        setupBannersViewPager()
+    }
+
+    private fun setupBannersViewPager() {
+        _bannersAdapter = BannerAdapter(banners)
+        binding.viewPagerBanners.adapter = bannersAdapter
+        setViewPagerHeight()
+        startAutoScrollBanners()
+    }
+
+    private fun setViewPagerHeight() {
+        val screenWidth = resources.displayMetrics.widthPixels // Получаем ширину экрана
+        val aspectRatio = 2.91f
+
+        val height = (screenWidth / aspectRatio).toInt()
+        binding.viewPagerBanners.layoutParams.height = height
+    }
+
+
+    private fun startAutoScrollBanners() {
+        autoScrollJob = lifecycleScope.launch {
+            while (isActive) {
+                delay(BANNER_AUTO_SCROLL_DELAY)
+                if (!userInteractingWithViewPager) {
+                    binding.viewPagerBanners.apply {
+                        currentItem = (currentItem + 1)
+                    }
+                }
+            }
         }
     }
+
+    private fun stopAutoScrollBanners() {
+        autoScrollJob?.cancel()
+    }
+
 
     override fun onResume() {
         super.onResume()
@@ -93,8 +156,11 @@ class MenuFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         binding.tabLayoutCategories.removeAllTabs()
+        stopAutoScrollBanners()
+
         _binding = null
-        Log.d("DEBUG", "Метод onDestroyView, удаляю все вкладки у tabLayoutMain")
+        _bannersAdapter = null
+
     }
 
 
@@ -159,7 +225,8 @@ class MenuFragment : Fragment() {
                 super.onScrolled(recyclerView, dx, dy)
                 val layoutManager = recyclerView.layoutManager as LinearLayoutManager
 
-                val firstVisiblePosition = layoutManager.findFirstCompletelyVisibleItemPosition()
+                val firstVisiblePosition =
+                    layoutManager.findFirstCompletelyVisibleItemPosition()
                 val lastVisiblePosition = layoutManager.findLastCompletelyVisibleItemPosition()
 
                 if (firstVisiblePosition != RecyclerView.NO_POSITION) {
@@ -306,11 +373,8 @@ class MenuFragment : Fragment() {
 
                 override fun onFavoriteToggleClick(meal: Meal) {
                     viewModel.toggleFavorite(meal)
-                    Toast.makeText(
-                        requireContext(),
-                        "Тык на сердечко: ${meal.name}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    makeToast("Тык на сердечко: ${meal.name}")
+
                 }
 
                 override fun onAddToCartClick(meal: Meal) {
@@ -336,6 +400,13 @@ class MenuFragment : Fragment() {
         return menuAdapter
     }
 
+    private fun makeToast(toastText: String) {
+        Toast.makeText(
+            requireContext(),
+            toastText,
+            Toast.LENGTH_SHORT
+        ).show()
+    }
 
     private fun progressBarManager(status: VisibilityStatus) {
         binding.apply {
@@ -384,5 +455,6 @@ class MenuFragment : Fragment() {
         }
 
         private const val CLICK_DEBOUNCE_DELAY = 1000L
+        private const val BANNER_AUTO_SCROLL_DELAY = 4000L
     }
 }
