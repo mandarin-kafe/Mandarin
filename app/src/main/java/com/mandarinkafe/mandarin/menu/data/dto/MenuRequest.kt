@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.menu.data.dto
 
-data class IkkoMenuRequest(
+data class MenuRequest(
     val externalMenuId: String,
     val organizationIds: List<String>,
 )

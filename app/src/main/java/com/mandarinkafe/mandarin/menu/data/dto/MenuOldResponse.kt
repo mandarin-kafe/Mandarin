@@ -1,13 +1,13 @@
 package com.mandarinkafe.mandarin.menu.data.dto
 
-data class IkkoMenuOldResponse(
+data class MenuOldResponse(
     val correlationId: String,
     val groups: List<Group>,
     val productCategories: List<ProductCategory>,
     val products: List<Product>,
     val revision: Long,
     val sizes: List<Size>
-)
+): Response()
 
 data class Group(
     val additionalInfo: String,

@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin.di
 
+import com.mandarinkafe.mandarin.MainViewModel
 import com.mandarinkafe.mandarin.meal_details.ui.MealDetailsViewModel
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.ui.MenuViewModel
@@ -13,5 +14,8 @@ val viewModelModule = module {
 
     viewModel<MenuViewModel> {
         MenuViewModel(favoritesInteractor = get())
+    }
+    viewModel<MainViewModel> {
+        MainViewModel(menuInteractor = get())
     }
 }

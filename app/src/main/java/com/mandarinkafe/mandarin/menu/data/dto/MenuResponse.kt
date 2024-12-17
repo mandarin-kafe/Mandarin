@@ -1,28 +1,22 @@
 package com.mandarinkafe.mandarin.menu.data.dto
 
-data class IkkoMenuResponse(
-    val description: String,
-    val id: Int,
+data class MenuResponse(
     val itemCategories: List<ItemCategory>,
-    val name: String
-)
+) : Response()
 
 data class ItemCategory(
-    val buttonImageUrl: String,
-    val description: String,
-    val headerImageUrl: String,
     val id: String,
+    val name: String,
     val items: List<Item>,
-    val name: String
-)
+    )
 
 data class Item(
+    val itemId: String,
+    val name: String,
     val allergenGroups: List<AllergenGroup>,
     val description: String,
-    val itemId: String,
     val itemSizes: List<ItemSize>,
     val modifierSchemaId: String,
-    val name: String,
     val orderItemType: String,
     val sku: String,
     val taxCategory: TaxCategory
@@ -85,7 +79,6 @@ data class PriceX(
     val organizationId: String,
     val price: Double
 )
-
 
 
 data class RestrictionsX(

@@ -1,6 +1,6 @@
 package com.mandarinkafe.mandarin.menu.data.dto
 
-data class IkkoOrganizationsResponse(
+data class OrganizationsResponse(
     val organizations: List<Organization>
 ): Response()
 
