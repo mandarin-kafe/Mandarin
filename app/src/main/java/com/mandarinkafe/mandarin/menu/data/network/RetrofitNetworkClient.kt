@@ -54,7 +54,7 @@ class RetrofitNetworkClient(private val context: Context, private val ikkoServic
                         organizationIds = listOf(organizationId)
                     )
                 )
-                Log.d("DEBUG IKKO API", "Данные меню: ${menuResponse.itemCategories}")
+                Log.d("DEBUG IKKO API", "Данные меню получены: ${menuResponse.itemCategories}")
                 menuResponse.apply { resultCode = 200 }
 
 
@@ -82,88 +82,3 @@ class RetrofitNetworkClient(private val context: Context, private val ikkoServic
         return false
     }
 }
-
-//    private fun getOrganizations(token: String) {
-//        ikkoService.getOrganizations(
-//            ("Bearer $token")
-//        )
-//            .enqueue(object : Callback<IkkoOrganizationsResponse> {
-//                override fun onResponse(
-//                    call: Call<IkkoOrganizationsResponse>,
-//                    response: Response<IkkoOrganizationsResponse>
-//                ) {
-//                    if (response.isSuccessful && response.body() != null) {
-//                        val organizations = response.body()?.organizations
-//                        if (!organizations.isNullOrEmpty()) {
-//
-//                            organizationId =
-//                                organizations[0].id       // Извлекаем id первого кафе и сохраняем в переменную
-//                            binding.tvRests.text = organizationId
-//                            Log.d("DEBUG", "organizationId = $organizationId")
-//                            menuRequest(token, IkkoMenuOldRequest(organizationId = organizationId))
-//
-//                        } else {
-//                            Toast.makeText(
-//                                requireContext(),
-//                                "Список организаций пуст",
-//                                Toast.LENGTH_SHORT
-//                            ).show()
-//                        }
-//                    } else {
-//                        Toast.makeText(
-//                            requireContext(),
-//                            "Ошибка получения данных. Код ошибки: ${response.code()}",
-//                            Toast.LENGTH_SHORT
-//                        ).show()
-//                    }
-//                }
-//
-//
-//                override fun onFailure(call: Call<IkkoOrganizationsResponse>, t: Throwable) {
-//                    Toast.makeText(
-//                        requireContext(),
-//                        "Ошибка получение кода ресторана, попали в onFailure. ${t.message}",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                }
-//
-//            })
-//    }
-
-//    private fun menuRequest(token: String, requestBody: IkkoMenuOldRequest) {
-//        ikkoService.getMenuOld(
-//            "Bearer $token", // Авторизация
-//            requestBody       // JSON-тело
-//        ).enqueue(object : Callback<IkkoMenuResponse> {
-//            override fun onResponse(
-//                call: Call<IkkoMenuResponse>,
-//                response: Response<IkkoMenuResponse>
-//            ) {
-//                if (response.isSuccessful) {
-//                    Toast.makeText(
-//                        requireContext(),
-//                        "Запрос меню успешен!",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                    binding.tvMenu.text = response.body().toString()
-//                } else {
-//                    Toast.makeText(
-//                        requireContext(),
-//                        "Ошибка выполнения запроса. Код ошибки: ${response.code()}",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                    Log.d("API DEBUG", "${response.code()}")
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<IkkoMenuResponse>, t: Throwable) {
-//                Toast.makeText(
-//                    requireContext(),
-//                    "onFailure. Ошибка выполнения запроса: ${t.message}",
-//                    Toast.LENGTH_SHORT
-//                ).show()
-//
-//                Log.d("API DEBUG", "${t.message}")
-//            }
-//        })
-//    }

@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -137,9 +138,8 @@ class MenuAdapter(
         private fun setOnClickListeners(meal: Meal) = with(binding) {
             parentView.setOnClickListener { clickListener.onMealClick(meal) }
             ivAddToFavorite.setOnClickListener {
-                clickListener.onFavoriteToggleClick(
-                    meal
-                )
+                clickListener.onFavoriteToggleClick(meal)
+                changeFavoriteIcon()
             }
             ivEditMeal.setOnClickListener { clickListener.onEditClick(meal) }
             btAddToCartPrice.setOnClickListener {
@@ -189,6 +189,32 @@ class MenuAdapter(
             }
 
 
+        }
+
+        private fun changeFavoriteIcon() {
+            val iconView = binding.ivAddToFavorite
+            val drawableFavActive = getDrawable(parentView.context, R.drawable.ic_favorite_active)
+            val drawableFavInactive =
+                getDrawable(parentView.context, R.drawable.ic_favorite_inactive)
+
+            iconView.apply {
+                animate()
+                    .alpha(0f) // Прозрачность 0
+                    .setDuration(150)
+                    .withEndAction { // Меняем изображение, когда оно исчезнет
+                        setImageResource(
+                            //TODO временный код, чтобы можно было потыкать. Потом тянуть инфо из данных списка и менять изображение в зхависимости от данных Meal.isFavorite
+                            if (iconView.drawable.constantState  == drawableFavInactive?.constantState ) R.drawable.ic_favorite_active
+                            else R.drawable.ic_favorite_inactive
+                        )
+                        // Плавно показываем новое изображение
+                        animate()
+                            .alpha(1f) // Прозрачность 1
+                            .setDuration(150)
+                            .start()
+                    }
+                    .start()
+            }
         }
 
         @SuppressLint("UseCompatLoadingForDrawables")

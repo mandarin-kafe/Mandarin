@@ -373,7 +373,6 @@ class MenuFragment : Fragment() {
 
                 override fun onFavoriteToggleClick(meal: Meal) {
                     viewModel.toggleFavorite(meal)
-                    makeToast("Тык на сердечко: ${meal.name}")
 
                 }
 

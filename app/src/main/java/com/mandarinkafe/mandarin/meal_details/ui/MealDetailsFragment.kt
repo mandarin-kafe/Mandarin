@@ -14,7 +14,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
+import com.mandarinkafe.mandarin.MainActivity
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.cart.Cart
 import com.mandarinkafe.mandarin.databinding.FragmentMealDetailsBinding
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import com.mandarinkafe.mandarin.menu.domain.models.mockAdditionalsList
@@ -101,19 +103,21 @@ class MealDetailsFragment : Fragment() {
     }
 
 
-
     private fun onCartButtonClick() {
         Toast.makeText(
             requireContext(),
             "Добавляю в корзину ${meal.name}, $mealPrice ₽",
             Toast.LENGTH_SHORT
         ).show()
+        Cart.addItem(meal)
+        (requireActivity() as MainActivity).updateCartAdapter()
+
         findNavController().popBackStack()
-            }
+    }
 
     private fun toggleFavorite(isFavorite: Boolean) {
         binding.ivAddToFavorite.apply {
-                 animate()
+            animate()
                 .alpha(0f) // Прозрачность 0
                 .setDuration(150)
                 .withEndAction { // Меняем изображение, когда оно исчезнет

@@ -26,7 +26,7 @@ interface IkkoApiService {
         @Header("Authorization") token: String,
          ): MenuIdResponse //TODO
 
-    @POST("api/2/menu/")
+    @POST("api/2/menu/by_id")
     suspend  fun getMenuById(
         @Header("Authorization") token: String,
         @Body body: MenuRequest
@@ -34,8 +34,3 @@ interface IkkoApiService {
 
 }
 
-//@POST("/api/1/nomenclature")
-//suspend fun getMenuOld(
-//    @Header("Authorization") token: String,
-//    @Body body: IkkoMenuOldRequest
-//): IkkoMenuOldResponse
