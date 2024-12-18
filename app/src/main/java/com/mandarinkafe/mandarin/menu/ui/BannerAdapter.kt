@@ -10,7 +10,8 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.menu.domain.models.Banner
 
 class BannerAdapter(
-    private val banners: List<Banner>
+    private val banners: List<Banner>,
+    private val onItemClick: () -> Unit
 ) : RecyclerView.Adapter<BannerAdapter.BannerViewHolder>() {
 
     class BannerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -32,7 +33,7 @@ class BannerAdapter(
 
 
         holder.itemView.setOnClickListener {
-//           TODO banner.categoryOnClick
+            onItemClick()
         }
     }
 

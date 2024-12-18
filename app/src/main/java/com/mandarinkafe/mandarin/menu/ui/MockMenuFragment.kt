@@ -18,9 +18,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.mandarinkafe.mandarin.MainActivity
+import com.mandarinkafe.mandarin.MockMenuViewModel
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.ScreenState
-import com.mandarinkafe.mandarin.SharedViewModel
 import com.mandarinkafe.mandarin.cart.Cart
 import com.mandarinkafe.mandarin.databinding.FragmentMenuBinding
 import com.mandarinkafe.mandarin.meal_details.ui.MealDetailsFragment
@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 
-class MenuFragment : Fragment() {
+class MockMenuFragment : Fragment() {
 
     private var _binding: FragmentMenuBinding? = null
     private val binding get() = requireNotNull(_binding) { "Binding wasn't initialized" }
@@ -47,7 +47,7 @@ class MenuFragment : Fragment() {
     private var isTabSyncing = false
     private val handler = Handler(Looper.getMainLooper())
 
-    private val viewModel: SharedViewModel by activityViewModel()
+    private val viewModel: MockMenuViewModel by activityViewModel()
 
 
     private var autoScrollJob: Job? = null
@@ -84,9 +84,11 @@ class MenuFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         viewModel.getScreenState().observe(viewLifecycleOwner)
 
         { state -> renderMenuScreen(state) }
+        viewModel.prepareMenuItems()
 
         binding.viewPagerBanners.registerOnPageChangeCallback(pageChangeCallback)
 //        Убрала пока dotsIndicator, поскольку он криво отображается в CoordinatorLayout
@@ -94,8 +96,6 @@ class MenuFragment : Fragment() {
 //        dotsIndicator.setViewPager(binding.viewPagerBanners)
         setupBannersViewPager()
         setPlaceholderCLickListeners()
-
-
     }
 
 
@@ -154,9 +154,8 @@ class MenuFragment : Fragment() {
     }
 
     private fun onBannerCLick() {
-        findNavController().navigate(R.id.action_menuFragment_to_mockMenuFragment)   //TODO временно - для демонстрации работы с мок-списком
-    }
 
+    }
 
     private fun setViewPagerHeight() {
         val screenWidth = resources.displayMetrics.widthPixels // Получаем ширину экрана
@@ -343,7 +342,7 @@ class MenuFragment : Fragment() {
 
     private fun showMealDetails(item: Item) {
         findNavController().navigate(
-            R.id.action_menuFragment_to_mealDetails,
+            R.id.action_mockMenuFragment_to_mealDetails,
             MealDetailsFragment.createArgs(item)
         )
     }
