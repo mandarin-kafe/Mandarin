@@ -19,18 +19,20 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.mandarinkafe.mandarin.MainActivity
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.ScreenState
+import com.mandarinkafe.mandarin.SharedViewModel
 import com.mandarinkafe.mandarin.cart.Cart
 import com.mandarinkafe.mandarin.databinding.FragmentMenuBinding
 import com.mandarinkafe.mandarin.meal_details.ui.MealDetailsFragment
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
-import com.mandarinkafe.mandarin.menu.domain.models.MenuCategory
+import com.mandarinkafe.mandarin.menu.domain.models.Item
+import com.mandarinkafe.mandarin.menu.domain.models.ItemCategory
 import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 import com.mandarinkafe.mandarin.menu.domain.models.mockBannersList
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 
 class MenuFragment : Fragment() {
@@ -44,7 +46,10 @@ class MenuFragment : Fragment() {
     private var isClickAllowed = true
     private var isTabSyncing = false
     private val handler = Handler(Looper.getMainLooper())
-    private val viewModel by viewModel<MenuViewModel>()
+
+    private val viewModel: SharedViewModel by activityViewModel()
+
+
     private var autoScrollJob: Job? = null
     private var userInteractingWithViewPager = false
 
@@ -68,20 +73,6 @@ class MenuFragment : Fragment() {
     )
 
 
-    private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
-        override fun onPageScrollStateChanged(state: Int) {
-            super.onPageScrollStateChanged(state)
-            // Если пользователь начал взаимодействовать с ViewPager2
-            when (state) {
-                ViewPager2.SCROLL_STATE_DRAGGING -> {
-                    userInteractingWithViewPager = true
-                    Log.d("DEBUG ViewPager","SCROLL_STATE_DRAGGING")
-                    //TODO добавить сюда дебаунс автопрокрутки (запуск через 5 сек после прекращения взаимодействия)
-                }
-            }
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -93,16 +84,64 @@ class MenuFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.prepareMenuItems()
-        viewModel.getMenuState().observe(viewLifecycleOwner)
+//      viewModel.prepareMenuItems() //TODO для демонстрации работы с мок-списком
+        viewModel.getScreenState().observe(viewLifecycleOwner)
 
         { state -> renderMenuScreen(state) }
 
-              binding.viewPagerBanners.registerOnPageChangeCallback(pageChangeCallback)
+        binding.viewPagerBanners.registerOnPageChangeCallback(pageChangeCallback)
 //        Убрала пока dotsIndicator, поскольку он криво отображается в CoordinatorLayout
 //        val dotsIndicator = binding.dotsIndicator
 //        dotsIndicator.setViewPager(binding.viewPagerBanners)
         setupBannersViewPager()
+        setPlaceholderCLickListeners()
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+
+        val tabLayoutMain = binding.tabLayoutCategories
+        val tabLayoutSub = binding.tabLayoutSubCategories
+
+        for (i in 0 until tabLayoutMain.tabCount) {
+            val tab = tabLayoutMain.getTabAt(i)
+            Log.d("TabLayout", "Вкладка $i: ${tab?.text ?: "Без текста"}")
+            tabLayoutMain.visibility = View.VISIBLE
+            tabLayoutSub.visibility = View.VISIBLE
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.tabLayoutCategories.removeAllTabs()
+        stopAutoScrollBanners()
+
+        _binding = null
+        _bannersAdapter = null
+
+    }
+
+    private fun setPlaceholderCLickListeners() {
+        binding.placeholder.apply {
+            bvPlaceholderRetry.setOnClickListener { viewModel.getMenu() }
+            bvPlaceholderCall.setOnClickListener { //TODO запустить интент  на звонок по номеру тел
+            }
+        }
+    }
+
+    private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageScrollStateChanged(state: Int) {
+            super.onPageScrollStateChanged(state)
+            // Если пользователь начал взаимодействовать с ViewPager2
+            when (state) {
+                ViewPager2.SCROLL_STATE_DRAGGING -> {
+                    userInteractingWithViewPager = true
+                    Log.d("DEBUG ViewPager", "SCROLL_STATE_DRAGGING")
+                    //TODO добавить сюда дебаунс автопрокрутки (запуск через 5 сек после прекращения взаимодействия)
+                }
+            }
+        }
     }
 
     private fun setupBannersViewPager() {
@@ -139,32 +178,7 @@ class MenuFragment : Fragment() {
     }
 
 
-    override fun onResume() {
-        super.onResume()
-
-        val tabLayoutMain = binding.tabLayoutCategories
-        val tabLayoutSub = binding.tabLayoutSubCategories
-
-        for (i in 0 until tabLayoutMain.tabCount) {
-            val tab = tabLayoutMain.getTabAt(i)
-            Log.d("TabLayout", "Вкладка $i: ${tab?.text ?: "Без текста"}")
-            tabLayoutMain.visibility = View.VISIBLE
-            tabLayoutSub.visibility = View.VISIBLE
-        }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        binding.tabLayoutCategories.removeAllTabs()
-        stopAutoScrollBanners()
-
-        _binding = null
-        _bannersAdapter = null
-
-    }
-
-
-    private fun setTabs(menuCategories: ArrayList<MenuCategory>) {
+    private fun setTabs(menuCategories: List<ItemCategory>) {
         menuCategories.forEach { category ->
             val tab = binding.tabLayoutCategories.newTab().setText(category.name)
             when (category.name.lowercase()) {
@@ -181,7 +195,7 @@ class MenuFragment : Fragment() {
 
 
     private fun addOnTabSelectedListener(
-        menuCategories: ArrayList<MenuCategory>,
+        menuCategories: List<ItemCategory>,
         menuItems: MutableList<MenuItem>
     ) {
         Log.d(
@@ -215,7 +229,7 @@ class MenuFragment : Fragment() {
     }
 
     private fun setScrollSync(
-        menuCategories: ArrayList<MenuCategory>,
+        menuCategories: List<ItemCategory>,
         menuItems: MutableList<MenuItem>
     ) {
         Log.d("DEBUG", "Вызвала метод setScrollSync для установки addOnScrollListener")
@@ -232,8 +246,8 @@ class MenuFragment : Fragment() {
                 if (firstVisiblePosition != RecyclerView.NO_POSITION) {
                     for (position in firstVisiblePosition..lastVisiblePosition) {
                         val item = menuItems[position]
-                        val categoryName = when (item) {
-                            is MenuItem.Header -> item.categoryName
+                        val category = when (item) {
+                            is MenuItem.Category -> item.categoryName
                             is MenuItem.MealItem -> {
                                 menuCategories.find { category -> category.items.contains(item.meal) }?.name
                             }
@@ -241,9 +255,9 @@ class MenuFragment : Fragment() {
                             else -> null
                         }
 
-                        if (categoryName != null) {
+                        if (category != null) {
                             val headerIndex =
-                                menuCategories.indexOfFirst { it.name == categoryName }
+                                menuCategories.indexOfFirst { it.name == category }
                             if (headerIndex != -1 && headerIndex != binding.tabLayoutCategories.selectedTabPosition) {
                                 isTabSyncing = true
 
@@ -306,44 +320,44 @@ class MenuFragment : Fragment() {
     }
 
     private fun scrollToCategory(
-        position: Int, menuCategories: ArrayList<MenuCategory>,
+        position: Int, menuCategories: List<ItemCategory>,
         menuItems: MutableList<MenuItem>
     ) {
-        val headerPosition = menuItems.indexOfFirst {
-            it is MenuItem.Header && it.categoryName == menuCategories[position].name
+        val categoryPosition = menuItems.indexOfFirst {
+            it is MenuItem.Category && it.categoryName == menuCategories[position].name
         }
-        if (headerPosition != -1) {
+        if (categoryPosition != -1) {
             val layoutManager = binding.rvMenu.layoutManager as LinearLayoutManager
             val offset = resources.getDimensionPixelSize(R.dimen.recycler_view_offset_1)
-            layoutManager.scrollToPositionWithOffset(headerPosition, offset)
+            layoutManager.scrollToPositionWithOffset(categoryPosition, offset)
         }
 
     }
 
-    private fun showMealDetails(meal: Meal) {
+    private fun showMealDetails(item: Item) {
         findNavController().navigate(
             R.id.action_menuFragment_to_mealDetails,
-            MealDetailsFragment.createArgs(meal)
+            MealDetailsFragment.createArgs(item)
         )
     }
 
-    private fun renderMenuScreen(state: MenuScreenState) {
+    private fun renderMenuScreen(state: ScreenState) {
         when (state) {
-            is MenuScreenState.Loading -> {
-                progressBarManager(VisibilityStatus.VISIBLE)
+            is ScreenState.Loading -> {
+                setProgressBarVisibility(VisibilityStatus.VISIBLE)
             }
 
-            is MenuScreenState.NetworkError -> {
-                placeholderManager(VisibilityStatus.VISIBLE)
+            is ScreenState.Error -> {
+                setPlaceholderVisibility(VisibilityStatus.VISIBLE)
             }
 
-            is MenuScreenState.Content -> {
-                progressBarManager(VisibilityStatus.HIDDEN)
-                placeholderManager(VisibilityStatus.HIDDEN)
-                setTabs(state.menuCategories)
-                setScrollSync(state.menuCategories, state.menuItems)
-                addOnTabSelectedListener(state.menuCategories, state.menuItems)
+            is ScreenState.Content -> {
+                setMenuVisibility(VisibilityStatus.VISIBLE)
+                setTabs(state.menu)
+                setScrollSync(state.menu, state.menuItems)
+                addOnTabSelectedListener(state.menu, state.menuItems)
                 setRvAdapter(state.menuItems)
+
 
                 val defaultTab = binding.tabLayoutCategories.getTabAt(0)
                 if (defaultTab != null) {
@@ -361,32 +375,32 @@ class MenuFragment : Fragment() {
     private fun setRvAdapter(menuItems: MutableList<MenuItem>): MenuAdapter {
         val menuAdapter = MenuAdapter(menuItems,
             object : MenuAdapter.MealClickListener {
-                override fun onMealClick(meal: Meal) {
+                override fun onMealClick(item: Item) {
                     if (clickDebounce()) {
-                        if (meal.category == "pizza") showMealDetails(meal)
+                        if (item.categoryId == "pizza") showMealDetails(item)
                     }
                 }
 
-                override fun onEditClick(meal: Meal) {
-                    showMealDetails(meal)
+                override fun onEditClick(item: Item) {
+                    showMealDetails(item)
                 }
 
-                override fun onFavoriteToggleClick(meal: Meal) {
-                    viewModel.toggleFavorite(meal)
+                override fun onFavoriteToggleClick(item: Item) {
+                    viewModel.toggleFavorite(item)
 
                 }
 
-                override fun onAddToCartClick(meal: Meal) {
-                    Cart.addItem(meal)
+                override fun onAddToCartClick(item: Item) {
+                    Cart.addItem(item)
                     (requireActivity() as MainActivity).updateCartAdapter()
                 }
 
-                override fun plusToCartClick(meal: Meal) {
-                    Cart.addItem(meal)
+                override fun plusToCartClick(item: Item) {
+                    Cart.addItem(item)
                     (requireActivity() as MainActivity).updateCartAdapter()
                 }
 
-                override fun minusToCartClick(meal: Meal) {
+                override fun minusToCartClick(item: Item) {
                     //TODO тут нужен метод корзины на минус
                 }
             })
@@ -399,7 +413,7 @@ class MenuFragment : Fragment() {
         return menuAdapter
     }
 
-    private fun makeToast(toastText: String) {
+    private fun makeShortToast(toastText: String) {
         Toast.makeText(
             requireContext(),
             toastText,
@@ -407,33 +421,66 @@ class MenuFragment : Fragment() {
         ).show()
     }
 
-    private fun progressBarManager(status: VisibilityStatus) {
+    private fun setProgressBarVisibility(status: VisibilityStatus) {
         binding.apply {
-//            when (status) {
-//                VisibilityStatus.VISIBLE -> {
-//                    searchProgressBar.isVisible = true
-//                    placeholderManager(VisibilityStatus.HIDDEN)
-//                }
-//
-//                VisibilityStatus.HIDDEN -> {
-//                    searchProgressBar.isVisible = false
-//                }
-//            }
+            when (status) {
+                VisibilityStatus.VISIBLE -> {
+                    progressbar.isVisible = true
+                    setPlaceholderVisibility(VisibilityStatus.HIDDEN)
+                    setMenuVisibility(VisibilityStatus.HIDDEN)
+                }
+
+                VisibilityStatus.HIDDEN -> {
+                    progressbar.isVisible = false
+                }
+            }
         }
     }
 
-    private fun placeholderManager(status: VisibilityStatus) {
-        binding.apply {
-//            when (status) {
-//                VisibilityStatus.VISIBLE -> {
-//                    tvPlaceholderMessage.isVisible = true
-//                    progressBarManager(VisibilityStatus.HIDDEN)
-//                }
-//
-//                VisibilityStatus.HIDDEN -> {
-//                    tvPlaceholderMessage.isVisible = false
-//                }
-//            }
+    private fun setMenuVisibility(status: VisibilityStatus) {
+        when (status) {
+            VisibilityStatus.VISIBLE -> {
+                setProgressBarVisibility(VisibilityStatus.HIDDEN)
+                setPlaceholderVisibility(VisibilityStatus.HIDDEN)
+                binding.appbarlayoutContent.isVisible = true
+                binding.rvMenu.isVisible = true
+            }
+
+            VisibilityStatus.HIDDEN -> {
+                binding.appbarlayoutContent.isVisible = false
+                binding.rvMenu.isVisible = false
+            }
+        }
+
+    }
+
+    private fun setPlaceholderVisibility(status: VisibilityStatus) {
+        binding.placeholder.apply {
+            when (status) {
+                VisibilityStatus.VISIBLE -> {
+                    ivPlaceholderImage.isVisible = true
+                    tvPlaceholderMessage.apply {
+                        isVisible = true
+                        text = getString(
+                            R.string.loading_error_template,
+                            getString(R.string.cafe_phone_number)
+                        )
+                    }
+
+
+                    bvPlaceholderCall.isVisible = true
+                    bvPlaceholderRetry.isVisible = true
+                    setProgressBarVisibility(VisibilityStatus.HIDDEN)
+                    setMenuVisibility(VisibilityStatus.HIDDEN)
+                }
+
+                VisibilityStatus.HIDDEN -> {
+                    ivPlaceholderImage.isVisible = false
+                    tvPlaceholderMessage.isVisible = false
+                    bvPlaceholderCall.isVisible = false
+                    bvPlaceholderRetry.isVisible = false
+                }
+            }
         }
     }
 

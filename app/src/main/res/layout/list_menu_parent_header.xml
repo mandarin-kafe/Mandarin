@@ -5,7 +5,7 @@
     android:id="@+id/tv_category_title"
     style="@style/MealTitleStyle"
     android:layout_width="wrap_content"
-    android:textAllCaps="false"
+    android:textAllCaps="true"
     android:layout_height="wrap_content"
     android:layout_gravity="center_vertical"
     android:ellipsize="end"

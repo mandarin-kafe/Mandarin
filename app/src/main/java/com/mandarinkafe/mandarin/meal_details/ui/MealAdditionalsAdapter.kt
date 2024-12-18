@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.databinding.ListAdditionalsItemBinding
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.domain.models.Item
 
 class MealAdditionalsAdapter(
-    private val additionals: ArrayList<Meal>,
+    private val additionals: ArrayList<Item>,
     private val clickListener: AddsClickListener
 ) :
     RecyclerView.Adapter<MealAdditionalsAdapter.AdditionalsViewHolder>() {
@@ -35,7 +35,7 @@ class MealAdditionalsAdapter(
             0 // TODO временная переменная! брать цифру из логики корзины, а то холдер одну и ту же переменную привязывает к разным товарам
 
 
-        fun bind(item: Meal) {
+        fun bind(item: Item) {
             setOnClickListeners(item)
             binding.apply {
                 tvMealTitle.text =
@@ -50,7 +50,7 @@ class MealAdditionalsAdapter(
             }
         }
 
-        private fun setOnClickListeners(item: Meal) = with(binding) {
+        private fun setOnClickListeners(item: Item) = with(binding) {
 
             btCartMinus.setOnClickListener {
                 clickListener.minusToCartClick(item)
@@ -105,8 +105,8 @@ class MealAdditionalsAdapter(
 
 
     interface AddsClickListener {
-        fun plusToCartClick(additional: Meal)
-        fun minusToCartClick(additional: Meal)
+        fun plusToCartClick(additional: Item)
+        fun minusToCartClick(additional: Item)
 
     }
 }

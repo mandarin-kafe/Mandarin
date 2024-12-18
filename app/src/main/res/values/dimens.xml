@@ -32,4 +32,7 @@
     <dimen name="to_cart_button_big_120">120dp</dimen>
     <dimen name="icon_small_16">16dp</dimen>
     <dimen name="to_cart_buttons_mediuml_80">80dp</dimen>
+    <dimen name="placeholder_image_size_120">120dp</dimen>
+    <dimen name="big_margin_24">24dp</dimen>
+    <dimen name="placeholder_button_size_200">200dp</dimen>
 </resources>

@@ -9,19 +9,19 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.databinding.RecommendItemBinding
 
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.domain.models.Item
 
-class RecommendedAdapter(private val recommendedItems: List<Meal>, private val onItemClicked: (Meal) -> Unit) : RecyclerView.Adapter<RecommendedAdapter.RecommendedViewHolder>() {
+class RecommendedAdapter(private val recommendedItems: List<Item>, private val onItemClicked: (Item) -> Unit) : RecyclerView.Adapter<RecommendedAdapter.RecommendedViewHolder>() {
 
     class RecommendedViewHolder(item: View) : RecyclerView.ViewHolder(item) {
         val binding = RecommendItemBinding.bind(item)
 
-        fun bind(meal: Meal) = with(binding) {
-            recommendNameMealInCard.text = meal.name
-            weightRecommendMealInCard.text = meal.weight.toString() + " г"
-            priceRecommendMealInCard.text = meal.price.toString() + " ₽"
+        fun bind(item: Item) = with(binding) {
+            recommendNameMealInCard.text = item.name
+            weightRecommendMealInCard.text = item.weight.toString() + " г"
+            priceRecommendMealInCard.text = item.price.toString() + " ₽"
             Glide.with(itemView.context)
-                .load(meal.imageUrl)
+                .load(item.imageUrl)
                 .transform(RoundedCorners(10))
                 .into(recommendPictureInCard)
         }

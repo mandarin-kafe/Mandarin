@@ -6,12 +6,27 @@
     android:paddingHorizontal="@dimen/small_margin_8"
     tools:context=".menu.ui.MenuFragment">
 
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="@dimen/placeholder_image_size_120"
+        android:layout_height="@dimen/placeholder_image_size_120"
+        android:layout_gravity="center"
+        android:indeterminateTint="@color/orange_transparent_50"
+        android:visibility="gone"/>
+
+    <include
+        android:id="@+id/placeholder"
+        layout="@layout/placeholder"
+    />
+
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbarlayout_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="0dp"
         android:backgroundTint="@android:color/transparent"
-        android:padding="0dp">
+        android:padding="0dp"
+     >
 
 
         <LinearLayout
@@ -112,7 +127,8 @@ android:id="@+id/rv_menu"
 android:layout_height="wrap_content"
 android:layout_width="match_parent"
 app:layout_behavior="@string/appbar_scrolling_view_behavior"
-tools:listitem="@layout/list_menu_item" />
+tools:listitem="@layout/list_menu_item"
+/>
 
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

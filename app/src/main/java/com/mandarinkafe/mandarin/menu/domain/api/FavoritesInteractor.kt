@@ -1,8 +1,8 @@
 package com.mandarinkafe.mandarin.menu.domain.api
 
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.domain.models.Item
 
 interface FavoritesInteractor {
-    fun addToFavorites(meal: Meal)
-    fun removeFromFavorites(meal: Meal)
+    fun addToFavorites(item: Item)
+    fun removeFromFavorites(item: Item)
 }

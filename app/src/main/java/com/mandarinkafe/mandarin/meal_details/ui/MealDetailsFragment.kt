@@ -18,7 +18,7 @@ import com.mandarinkafe.mandarin.MainActivity
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.cart.Cart
 import com.mandarinkafe.mandarin.databinding.FragmentMealDetailsBinding
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.domain.models.Item
 import com.mandarinkafe.mandarin.menu.domain.models.mockAdditionalsList
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -29,11 +29,11 @@ class MealDetailsFragment : Fragment() {
     private val gson: Gson by lazy { Gson() }
     private var _binding: FragmentMealDetailsBinding? = null
     private val binding get() = requireNotNull(_binding) { "Binding wasn't initialized" }
-    private val viewModel by viewModel<MealDetailsViewModel> { parametersOf(meal) }
-    private val meal by lazy {
+    private val viewModel by viewModel<MealDetailsViewModel> { parametersOf(item) }
+    private val item by lazy {
         gson.fromJson(
             requireArguments().getString(MEAL),
-            Meal::class.java
+            Item::class.java
         )
     }
     private var mealPrice = 0
@@ -66,19 +66,19 @@ class MealDetailsFragment : Fragment() {
     private fun setMealData() {
         val cornerRadius =
             resources.getDimensionPixelSize(R.dimen.image_corner_radius_2)
-        mealPrice = meal.price
+        mealPrice = item.price
         binding.apply {
-            tvMealTitleTop.text = meal.name
-            tvMealIngredients.text = meal.description
-            tvMealWeight.text = getString(R.string.meal_weight_template, meal.weight)
-            tvMealPriceOriginal.text = getString(R.string.meal_price_template, meal.price)
+            tvMealTitleTop.text = item.name
+            tvMealIngredients.text = item.description
+            tvMealWeight.text = getString(R.string.meal_weight_template, item.weight)
+            tvMealPriceOriginal.text = getString(R.string.meal_price_template, item.price)
 
 
             Glide.with(requireContext())
-                .load(meal.imageUrl)
+                .load(item.imageUrl)
                 .centerCrop()
                 .transform(RoundedCorners(cornerRadius))
-                .placeholder(R.drawable.ic_cover_placeholder)
+                .placeholder(R.drawable.logo_orange)
                 .into(ivMealPicture)
 
             fabAddToCartPrice.text = getString(
@@ -106,10 +106,10 @@ class MealDetailsFragment : Fragment() {
     private fun onCartButtonClick() {
         Toast.makeText(
             requireContext(),
-            "Добавляю в корзину ${meal.name}, $mealPrice ₽",
+            "Добавляю в корзину ${item.name}, $mealPrice ₽",
             Toast.LENGTH_SHORT
         ).show()
-        Cart.addItem(meal)
+        Cart.addItem(item)
         (requireActivity() as MainActivity).updateCartAdapter()
 
         findNavController().popBackStack()
@@ -142,7 +142,7 @@ class MealDetailsFragment : Fragment() {
             mockAdditionalsList,
             object : MealAdditionalsAdapter.AddsClickListener {
 
-                override fun plusToCartClick(additional: Meal) {
+                override fun plusToCartClick(additional: Item) {
                     //TODO сделать логику корзины для добавок к блюду
                     mealPrice += additional.price
                     binding.fabAddToCartPrice.text =
@@ -150,7 +150,7 @@ class MealDetailsFragment : Fragment() {
 
                 }
 
-                override fun minusToCartClick(additional: Meal) {
+                override fun minusToCartClick(additional: Item) {
                     //TODO сделать логику корзины для добавок к блюду
                     mealPrice -= additional.price
                     binding.fabAddToCartPrice.text =
@@ -180,7 +180,7 @@ class MealDetailsFragment : Fragment() {
     companion object {
         const val MEAL = "meal"
         private val gson: Gson = getKoin().get()
-        fun createArgs(meal: Meal): Bundle =
-            bundleOf(MEAL to gson.toJson(meal))
+        fun createArgs(item: Item): Bundle =
+            bundleOf(MEAL to gson.toJson(item))
     }
 }

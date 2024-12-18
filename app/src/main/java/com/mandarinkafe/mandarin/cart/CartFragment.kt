@@ -11,7 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mandarinkafe.mandarin.databinding.FragmentCartBinding
-import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.domain.models.Item
 import com.mandarinkafe.mandarin.menu.domain.models.mockPizzaList
 
 
@@ -58,8 +58,8 @@ class CartFragment : Fragment() {
     fun displayCartItems() {
         cartAdapter.notifyDataSetChanged()
     }
-    private fun addToCart(meal: Meal) {
-        Cart.addItem(meal) // используем метод из Cart для добавления элемента
+    private fun addToCart(item: Item) {
+        Cart.addItem(item) // используем метод из Cart для добавления элемента
         cartAdapter.notifyItemInserted(Cart.items.size - 1) // уведомляем адаптер о добавлении
     }
     private fun sendEmail() {

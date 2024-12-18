@@ -1,6 +1,8 @@
 package com.mandarinkafe.mandarin.menu.domain.models
 
 sealed class MenuItem {
-    data class Header(val categoryName: String) : MenuItem()
-    data class MealItem(val meal: Meal) : MenuItem()
+    open class Category(val categoryName: String) : MenuItem()
+    class SubCategory(categoryName: String, val parentCategoryName: String) : Category(categoryName)
+    class MealItem(val meal: Item) : MenuItem()
+
 }

@@ -14,7 +14,7 @@ class BannerAdapter(
 ) : RecyclerView.Adapter<BannerAdapter.BannerViewHolder>() {
 
     class BannerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-         }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BannerViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_banner, parent, false)
@@ -28,7 +28,6 @@ class BannerAdapter(
         Glide.with(holder.itemView)
             .load(banner.imageUrl)
             .fitCenter()
-                    .placeholder(R.drawable.ic_cover_placeholder)
             .into(imageView)
 
 
