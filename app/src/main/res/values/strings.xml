@@ -10,8 +10,7 @@
     <string name="logo_cafe">Логотип кафе</string>
     <string name="cart">Корзина</string>
     <string name="cafe_phone_number">+7&#160;(495)&#160;108–70–55</string>
-    <string name="cafe_phone_number_digits">+74951087055</string>
-    <string name="delivery">Доставка</string>
+      <string name="delivery">Доставка</string>
     <string name="delivery_history">История заказов</string>
     <string name="favorite">Избранное</string>
     <string name="sushi">Суши</string>

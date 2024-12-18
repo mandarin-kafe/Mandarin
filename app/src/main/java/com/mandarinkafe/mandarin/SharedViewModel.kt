@@ -1,5 +1,6 @@
 package com.mandarinkafe.mandarin
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,32 +17,20 @@ class SharedViewModel(
     private val favoritesInteractor: FavoritesInteractor
 ) : ViewModel() {
 
-//   для демонстрации меню с мок-списком включить
-//    init {
-//        menuCategories = mockMenuData
-//        menuCategories.forEach { category ->
-//            menuItems.add(MenuItem.Header(category.name))
-//            menuItems.addAll(category.items.map { MenuItem.MealItem(it) })
-//        }
-//    }
-//      fun prepareMenuItems() {
-//    screenState.value =
-//        ScreenState.Content(menuCategories = mockMenuData, menuItems = menuItems)
-//      }
-
-    private var menuCategories = mutableListOf<ItemCategory>()
     private var menuItems = mutableListOf<MenuItem>()
-
-
     private var screenState = MutableLiveData<ScreenState>(ScreenState.Loading)
     fun getScreenState(): LiveData<ScreenState> = screenState
 
     fun getMenu() {
         screenState.postValue(ScreenState.Loading)
         viewModelScope.launch {
-            menuInteractor.getMenu().collect { pair -> //   для демонстрации меню с мок-списком ВЫКЛЮЧИТЬ
-                processMenuResult(pair.first, pair.second) //   для демонстрации меню с мок-списком ВЫКЛЮЧИТЬ
-            }
+            menuInteractor.getMenu()
+                .collect { pair ->
+                    processMenuResult(
+                        pair.first,
+                        pair.second
+                    )
+                }
         }
     }
 
@@ -55,7 +44,8 @@ class SharedViewModel(
             screenState.postValue(ScreenState.Content(menu, menuItems))
         }
         if (errorMessage != null) {
-            screenState.postValue(ScreenState.Error(errorMessage))
+            screenState.postValue(ScreenState.Error)
+            Log.e("ERROR", "$errorMessage")
         }
     }
 
@@ -65,30 +55,15 @@ class SharedViewModel(
         } else {
             favoritesInteractor.addToFavorites(item)
         }
-        updateMealContent(item.id, item.copy(isFavorite = !item.isFavorite))
-    }
-
-    private fun updateMealContent(mealId: String, newItem: Item) {
-        val currentState = screenState.value
-
-//        if (currentState is MenuScreenState.Content) {
-//            val movieIndex = currentState.menuItems.indexOfFirst { it.id == mealId }
-//            if (movieIndex != -1) {
-//                menuState.value = MenuScreenState.Content(currentState.menuCategories,
-//                    currentState.menuItems.toMutableList().also {
-//                        it[movieIndex] = newMeal
-//                    }
-//                )
-//            }
-//        }
 
     }
+
 }
 
-    sealed interface ScreenState {
-        data object Loading : ScreenState
-        data class Error(var errorMessage: String) : ScreenState
-        data class Content(var menu: List<ItemCategory>, var menuItems: MutableList<MenuItem>) :
-            ScreenState
-    }
+sealed interface ScreenState {
+    data object Loading : ScreenState
+    data object Error : ScreenState
+    data class Content(var menu: List<ItemCategory>, var menuItems: MutableList<MenuItem>) :
+        ScreenState
+}
 

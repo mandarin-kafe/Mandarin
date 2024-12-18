@@ -10,8 +10,8 @@ data class Item(
     val weight: Int?,
     val price: Int,
     val imageUrl: String?,
-    val categoryId: String?,
-    val isFavorite: Boolean,
+    var categoryId: String?,
+    var isFavorite: Boolean,
     val tags: List<Tag>?,
 )
 
@@ -38,7 +38,7 @@ var mockPizzaList = arrayListOf<Item>(
         985,
         "https://optim.tildacdn.com/tild3666-6364-4133-b961-346132373737/-/resize/312x/-/format/webp/mandarin_new.jpg",
         "pizza",
-        true,
+        false,
         null
     ),
     Item(
@@ -110,7 +110,7 @@ var mockPizzaList = arrayListOf<Item>(
         1050,
         "https://optim.tildacdn.com/tild6461-3330-4761-b163-616164303634/-/resize/312x/-/format/webp/dolce_vita_new.jpg",
         "pizza",
-        true,
+        false,
         null
     ),
     Item(

@@ -43,6 +43,10 @@ class MockMenuFragment : Fragment() {
     private var _bannersAdapter: BannerAdapter? = null
     private val bannersAdapter get() = _bannersAdapter!!
 
+    private var _menuAdapter: MenuAdapter? = null
+    private val menuAdapter get() = _menuAdapter!!
+
+
     private var isClickAllowed = true
     private var isTabSyncing = false
     private val handler = Handler(Looper.getMainLooper())
@@ -96,6 +100,7 @@ class MockMenuFragment : Fragment() {
 //        dotsIndicator.setViewPager(binding.viewPagerBanners)
         setupBannersViewPager()
         setPlaceholderCLickListeners()
+        setRvAdapter()
     }
 
 
@@ -120,6 +125,7 @@ class MockMenuFragment : Fragment() {
 
         _binding = null
         _bannersAdapter = null
+        _menuAdapter = null
 
     }
 
@@ -146,7 +152,7 @@ class MockMenuFragment : Fragment() {
     }
 
     private fun setupBannersViewPager() {
-        _bannersAdapter = BannerAdapter(banners) {  -> onBannerCLick() }
+        _bannersAdapter = BannerAdapter(banners) { -> onBannerCLick() }
         binding.viewPagerBanners.adapter = bannersAdapter
         setViewPagerHeight()
         startAutoScrollBanners()
@@ -362,8 +368,7 @@ class MockMenuFragment : Fragment() {
                 setTabs(state.menu)
                 setScrollSync(state.menu, state.menuItems)
                 addOnTabSelectedListener(state.menu, state.menuItems)
-                setRvAdapter(state.menuItems)
-
+                menuAdapter.setMenuList(state.menuItems)
 
                 val defaultTab = binding.tabLayoutCategories.getTabAt(0)
                 if (defaultTab != null) {
@@ -378,44 +383,43 @@ class MockMenuFragment : Fragment() {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun setRvAdapter(menuItems: MutableList<MenuItem>): MenuAdapter {
-        val menuAdapter = MenuAdapter(menuItems,
-            object : MenuAdapter.MealClickListener {
-                override fun onMealClick(item: Item) {
-                    if (clickDebounce()) {
-                        if (item.categoryId == "pizza") showMealDetails(item)
-                    }
+    private fun setRvAdapter(): MenuAdapter {
+        _menuAdapter = MenuAdapter(object : MenuAdapter.MealClickListener {
+            override fun onMealClick(item: Item) {
+                if (clickDebounce()) {
+                    if (item.categoryId == "pizza") showMealDetails(item)
                 }
+            }
 
-                override fun onEditClick(item: Item) {
-                    showMealDetails(item)
-                }
+            override fun onEditClick(item: Item) {
+                showMealDetails(item)
+            }
 
-                override fun onFavoriteToggleClick(item: Item) {
-                    viewModel.toggleFavorite(item)
+            override fun onFavoriteToggleClick(item: Item, position: Int) {
+                viewModel.toggleFavorite(item)
+                menuAdapter.notifyItemChanged(position)
+            }
 
-                }
+            override fun onAddToCartClick(item: Item) {
+                Cart.addItem(item)
+                (requireActivity() as MainActivity).updateCartAdapter()
+            }
 
-                override fun onAddToCartClick(item: Item) {
-                    Cart.addItem(item)
-                    (requireActivity() as MainActivity).updateCartAdapter()
-                }
+            override fun plusToCartClick(item: Item) {
+                Cart.addItem(item)
+                (requireActivity() as MainActivity).updateCartAdapter()
+            }
 
-                override fun plusToCartClick(item: Item) {
-                    Cart.addItem(item)
-                    (requireActivity() as MainActivity).updateCartAdapter()
-                }
-
-                override fun minusToCartClick(item: Item) {
-                    //TODO тут нужен метод корзины на минус
-                }
-            })
+            override fun minusToCartClick(item: Item) {
+                //TODO тут нужен метод корзины на минус
+            }
+        })
         binding.rvMenu.apply {
             layoutManager =
                 LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false)
             adapter = menuAdapter
         }
-        menuAdapter.notifyDataSetChanged()
+
         return menuAdapter
     }
 

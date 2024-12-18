@@ -1,14 +1,12 @@
 package com.mandarinkafe.mandarin.menu.ui
 
 import android.annotation.SuppressLint
-import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -20,13 +18,17 @@ import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
 
 
 class MenuAdapter(
-    private val items: List<MenuItem>,
     private val clickListener: MealClickListener
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
+    private var items: List<MenuItem> = listOf()
 
+    fun setMenuList(menuData: List<MenuItem>) {
+        items = menuData
+        notifyDataSetChanged()
+    }
 
     override fun getItemViewType(position: Int): Int {
         return when (items[position]) {
@@ -65,11 +67,16 @@ class MenuAdapter(
             is MenuItem.MealItem -> {
                 (holder as MealViewHolder).bind(item.meal)
             }
+
             is MenuItem.SubCategory -> (holder as HeaderViewHolder).bind(item)
             is MenuItem.Category -> (holder as HeaderViewHolder).bind(item)
 
 
         }
+    }
+
+    override fun getItemCount(): Int {
+        return items.size
     }
 
     private fun clickDebounce(): Boolean {
@@ -81,9 +88,6 @@ class MenuAdapter(
         return current
     }
 
-    override fun getItemCount(): Int {
-        return items.size
-    }
 
     class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val headerTextView: TextView = itemView.findViewById(R.id.tv_category_title)
@@ -140,14 +144,15 @@ class MenuAdapter(
                 .placeholder(R.drawable.logo_orange)
                 .into(ivMealPicture)
             tvMealIngredients.requestLayout()
-            ivAddToFavorite.setImageDrawable(getFavoriteDrawable(item.isFavorite))
+
+            ivAddToFavorite.setImageResource(getFavoriteDrawable(item.isFavorite))
         }
 
         private fun setOnClickListeners(item: Item) = with(binding) {
             parentView.setOnClickListener { clickListener.onMealClick(item) }
             ivAddToFavorite.setOnClickListener {
-                clickListener.onFavoriteToggleClick(item)
-                changeFavoriteIcon()
+                clickListener.onFavoriteToggleClick(item, getBindingAdapterPosition())
+                toggleFavorite(item)
             }
             ivEditMeal.setOnClickListener { clickListener.onEditClick(item) }
             btAddToCartPrice.setOnClickListener {
@@ -199,23 +204,24 @@ class MenuAdapter(
 
         }
 
-        private fun changeFavoriteIcon() {
-            val iconView = binding.ivAddToFavorite
-            val drawableFavActive = getDrawable(parentView.context, R.drawable.ic_favorite_active)
-            val drawableFavInactive =
-                getDrawable(parentView.context, R.drawable.ic_favorite_inactive)
 
-            iconView.apply {
+        private fun getFavoriteDrawable(inFavorite: Boolean): Int {
+            val drawableId =
+                if (inFavorite) R.drawable.ic_favorite_active else R.drawable.ic_favorite_inactive
+            return drawableId
+        }
+
+        @SuppressLint("UseCompatLoadingForDrawables")
+        private fun toggleFavorite(item: Item) {
+            val newDrawableId = getFavoriteDrawable(!item.isFavorite)
+
+            binding.ivAddToFavorite.apply {
                 animate()
                     .alpha(0f) // Прозрачность 0
                     .setDuration(150)
                     .withEndAction { // Меняем изображение, когда оно исчезнет
-                        setImageResource(
-                            //TODO временный код, чтобы можно было потыкать. Потом тянуть инфо из данных списка и менять изображение в зхависимости от данных Meal.isFavorite
-                            if (iconView.drawable.constantState == drawableFavInactive?.constantState) R.drawable.ic_favorite_active
-                            else R.drawable.ic_favorite_inactive
-                        )
-                        // Плавно показываем новое изображение
+                        setImageResource(newDrawableId)
+
                         animate()
                             .alpha(1f) // Прозрачность 1
                             .setDuration(150)
@@ -223,13 +229,7 @@ class MenuAdapter(
                     }
                     .start()
             }
-        }
-
-        @SuppressLint("UseCompatLoadingForDrawables")
-        private fun getFavoriteDrawable(inFavorite: Boolean): Drawable? {
-            return itemView.context.getDrawable(
-                if (inFavorite) R.drawable.ic_favorite_active else R.drawable.ic_favorite_inactive
-            )
+            item.isFavorite = !item.isFavorite
         }
 
         private fun extraCartButtonsManager(inCart: Boolean) {
@@ -249,7 +249,7 @@ class MenuAdapter(
 
     interface MealClickListener {
         fun onMealClick(item: Item)
-        fun onFavoriteToggleClick(item: Item)
+        fun onFavoriteToggleClick(item: Item, position: Int)
         fun onAddToCartClick(item: Item)
         fun onEditClick(item: Item)
         fun plusToCartClick(item: Item)

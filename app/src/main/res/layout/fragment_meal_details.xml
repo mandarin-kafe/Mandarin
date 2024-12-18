@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/back"
-                app:srcCompat="@drawable/ic_arrow_back_24"
+                app:srcCompat="@drawable/ic_arrow_back"
                 app:tint="@color/black" />
 
             <!-- Пустое пространство -->

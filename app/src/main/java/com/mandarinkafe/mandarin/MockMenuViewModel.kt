@@ -42,11 +42,24 @@ class MockMenuViewModel(
         } else {
             favoritesInteractor.addToFavorites(item)
         }
-        updateMealContent(item.id, item.copy(isFavorite = !item.isFavorite))
+//        updateMealContent(item, item.copy(isFavorite = !item.isFavorite))
+
     }
 
-    private fun updateMealContent(mealId: String, newItem: Item) {
-
+    private fun updateMealContent(oldItem: Item, newItem: Item) {
+        val currentState = screenState.value
+        if (currentState is ScreenState.Content) {
+            val itemIndex = currentState.menuItems.indexOfFirst { item ->
+                item is MenuItem.MealItem && item.meal == oldItem
+            }
+            if (itemIndex != -1) {
+                screenState.value = ScreenState.Content(currentState.menu,
+                    currentState.menuItems.also {
+                        it[itemIndex] = MenuItem.MealItem(newItem)
+                    }
+                )
+            }
+        }
 
     }
 }
