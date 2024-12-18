@@ -70,8 +70,8 @@
             <!-- Правая кнопка -->
             <ImageButton
                 android:id="@+id/iv_add_to_favorite"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/toggle_favorite_button_28"
+                android:layout_height="@dimen/toggle_favorite_button_28"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/add_to_favorite"
                 app:srcCompat="@drawable/ic_favorite_inactive"

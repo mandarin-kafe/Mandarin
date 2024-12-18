@@ -35,4 +35,6 @@
     <dimen name="placeholder_image_size_120">120dp</dimen>
     <dimen name="big_margin_24">24dp</dimen>
     <dimen name="placeholder_button_size_200">200dp</dimen>
+    <dimen name="edit_meal_button_32">32dp</dimen>
+    <dimen name="toggle_favorite_button_28">28dp</dimen>
 </resources>

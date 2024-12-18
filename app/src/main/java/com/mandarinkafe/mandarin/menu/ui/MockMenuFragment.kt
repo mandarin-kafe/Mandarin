@@ -397,8 +397,7 @@ class MockMenuFragment : Fragment() {
 
             override fun onFavoriteToggleClick(item: Item, position: Int) {
                 viewModel.toggleFavorite(item)
-                menuAdapter.notifyItemChanged(position)
-            }
+                          }
 
             override fun onAddToCartClick(item: Item) {
                 Cart.addItem(item)
