@@ -5,6 +5,8 @@ import com.mandarinkafe.mandarin.menu.domain.models.Meal
 interface FavoritesRepository {
     fun addToFavorites(meal: Meal)
     fun removeFromFavorites(meal: Meal)
+    fun getFavoriteIds() : List<String>
+
 }
 
 

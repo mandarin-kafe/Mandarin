@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mandarinkafe.mandarin.databinding.FragmentCartBinding
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
-import com.mandarinkafe.mandarin.menu.domain.models.mockPizzaList
+import com.mandarinkafe.mandarin.menu.domain.models.mockPizza35List
 
 
 class CartFragment : Fragment() {
@@ -39,14 +39,14 @@ class CartFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        cartAdapter = CartAdapter(Cart.items)
+        cartAdapter = CartAdapter(Cart.meals)
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = cartAdapter
     }
 
     private fun setupRecommendedRecyclerView() {
 
-        recommendedAdapter = RecommendedAdapter(mockPizzaList){ meal ->
+        recommendedAdapter = RecommendedAdapter(mockPizza35List){ meal ->
             addToCart(meal) // добавляем обработчик нажатия
         }
 
@@ -58,13 +58,13 @@ class CartFragment : Fragment() {
     fun displayCartItems() {
         cartAdapter.notifyDataSetChanged()
     }
-    private fun addToCart(meal: Meal) {
-        Cart.addItem(meal) // используем метод из Cart для добавления элемента
-        cartAdapter.notifyItemInserted(Cart.items.size - 1) // уведомляем адаптер о добавлении
+    private fun addToCart(item: Meal) {
+        Cart.addItem(item) // используем метод из Cart для добавления элемента
+        cartAdapter.notifyItemInserted(Cart.meals.size - 1) // уведомляем адаптер о добавлении
     }
     private fun sendEmail() {
         // Собираем информацию о товарах
-        val cartItems = Cart.items
+        val cartItems = Cart.meals
         val emailBody = StringBuilder("Уважаемый продавец, \n\nЯ хочу заказать следующие товары:\n\n")
 
         for (item in cartItems) {

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.core.bundle.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,10 +16,13 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.cart.Cart
+import com.mandarinkafe.mandarin.core.ui.MainActivity
 import com.mandarinkafe.mandarin.databinding.FragmentMealDetailsBinding
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
-import com.mandarinkafe.mandarin.menu.domain.models.mockAdditionalsList
+import com.mandarinkafe.mandarin.menu.domain.models.mockPizzaAddsCheeseList
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import org.koin.java.KoinJavaComponent.getKoin
 
 
@@ -26,8 +30,8 @@ class MealDetailsFragment : Fragment() {
     private val gson: Gson by lazy { Gson() }
     private var _binding: FragmentMealDetailsBinding? = null
     private val binding get() = requireNotNull(_binding) { "Binding wasn't initialized" }
-    private val viewModel by viewModel<MealDetailsViewModel>()
-    private val meal by lazy {
+    private val viewModel by viewModel<MealDetailsViewModel> { parametersOf(meal) }
+    private val meal: Meal by lazy {
         gson.fromJson(
             requireArguments().getString(MEAL),
             Meal::class.java
@@ -54,6 +58,10 @@ class MealDetailsFragment : Fragment() {
         setupRecyclerView()
         setMealData()
         setTabs(addsCategoriesPizza)
+
+        viewModel.getIsFavoriteLiveData().observe(viewLifecycleOwner) { isFavorite ->
+            toggleFavorite(isFavorite)
+        }
     }
 
     private fun setMealData() {
@@ -63,7 +71,12 @@ class MealDetailsFragment : Fragment() {
         binding.apply {
             tvMealTitleTop.text = meal.name
             tvMealIngredients.text = meal.description
-            tvMealWeight.text = getString(R.string.meal_weight_template, meal.weight)
+            tvMealWeight.apply {
+                if (meal.weight == null || meal.weight == 0) isVisible = false
+                text = getString(R.string.meal_weight_template, meal.weight)
+            }
+
+
             tvMealPriceOriginal.text = getString(R.string.meal_price_template, meal.price)
 
 
@@ -71,7 +84,7 @@ class MealDetailsFragment : Fragment() {
                 .load(meal.imageUrl)
                 .centerCrop()
                 .transform(RoundedCorners(cornerRadius))
-                .placeholder(R.drawable.ic_cover_placeholder)
+                .placeholder(R.drawable.logo_orange)
                 .into(ivMealPicture)
 
             fabAddToCartPrice.text = getString(
@@ -90,36 +103,49 @@ class MealDetailsFragment : Fragment() {
                 onCartButtonClick()
             }
             ivAddToFavorite.setOnClickListener {
-                onFavoriteToggleClick()
+                viewModel.toggleFavorite()
             }
         }
     }
 
 
-
-
     private fun onCartButtonClick() {
         Toast.makeText(
             requireContext(),
-            "Добавляю в корзину ${meal.name}, ${meal.price} ₽",
+            "Добавляю в корзину ${meal.name}, $mealPrice ₽",
             Toast.LENGTH_SHORT
         ).show()
+        Cart.addItem(meal)
+        (requireActivity() as MainActivity).updateCartAdapter()
+
+        findNavController().popBackStack()
     }
 
-    private fun onFavoriteToggleClick() {
-        viewModel.toggleFavorite(meal)
-        Toast.makeText(
-            requireContext(),
-            "Тык на сердечко: ${meal.name}",
-            Toast.LENGTH_SHORT
-        ).show()
+    private fun toggleFavorite(isFavorite: Boolean) {
+        binding.ivAddToFavorite.apply {
+            animate()
+                .alpha(0f) // Прозрачность 0
+                .setDuration(150)
+                .withEndAction { // Меняем изображение, когда оно исчезнет
+                    setImageResource(
+                        if (isFavorite) R.drawable.ic_favorite_active
+                        else R.drawable.ic_favorite_inactive
+                    )
+                    // Плавно показываем новое изображение
+                    animate()
+                        .alpha(1f) // Прозрачность 1
+                        .setDuration(150)
+                        .start()
+                }
+                .start()
+        }
     }
 
     private fun setupRecyclerView() {
         val recyclerView = binding.rvAdds
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = MealAdditionalsAdapter(
-            mockAdditionalsList,
+            mockPizzaAddsCheeseList,
             object : MealAdditionalsAdapter.AddsClickListener {
 
                 override fun plusToCartClick(additional: Meal) {

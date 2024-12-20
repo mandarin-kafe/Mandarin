@@ -9,7 +9,7 @@ import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.databinding.ItemCartBinding
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
 
-class CartAdapter(private val items: List<Meal>) : RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
+class CartAdapter(private val meals: List<Meal>) : RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
 
     class CartViewHolder(item: View) : RecyclerView.ViewHolder(item) {
         val binding = ItemCartBinding.bind(item)
@@ -31,10 +31,10 @@ class CartAdapter(private val items: List<Meal>) : RecyclerView.Adapter<CartAdap
     }
 
     override fun onBindViewHolder(holder: CartViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(meals[position])
     }
 
     override fun getItemCount(): Int {
-        return items.size
+        return meals.size
     }
 }

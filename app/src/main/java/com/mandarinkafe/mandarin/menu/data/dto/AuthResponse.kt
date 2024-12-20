@@ -1,3 +1,3 @@
 package com.mandarinkafe.mandarin.menu.data.dto
 
-class IkkoAuthRequest(val apiLogin: String)
+class AuthResponse(val token: String): Response()

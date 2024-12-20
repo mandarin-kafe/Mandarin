@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/small_margin_8"
+    android:animateLayoutChanges="true"
     android:paddingHorizontal="@dimen/small_margin_8">
 
 
@@ -28,20 +29,21 @@
         style="@style/RegularTextStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/standart_margin_16"
         android:layout_weight="1"
         android:gravity="center_horizontal"
         android:textSize="@dimen/regular_text_size_14"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/bt_cart_plus"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginEnd="@dimen/standart_margin_16"
+        android:visibility="gone"
         tools:text="135 ₽" />
 
 
     <!-- Поле с информацией о количестве данного товара в корзин -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/background_for_cart_info"
-        style="@style/CartButtonStyle"
+        style="@style/ToCartButtonsBackgroundStyle"
         android:layout_width="@dimen/to_cart_button_big_120"
         android:layout_height="0dp"
         android:clickable="false"
@@ -57,7 +59,7 @@
         style="@style/CartButtonSmallTextStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@id/cntr_of_background_bt"
         app:layout_constraintEnd_toStartOf="@id/bt_cart_plus"
         app:layout_constraintStart_toEndOf="@id/bt_cart_minus"
@@ -88,9 +90,9 @@
     <!-- Кнопка уменьшения количества -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/bt_cart_minus"
-        style="@style/CartButtonStyle"
-        android:layout_width="@dimen/to_cart_buttons_small_40"
-        android:layout_height="@dimen/to_cart_buttons_small_40"
+        style="@style/ToCartButtonStyle"
+        android:layout_width="@dimen/plus_cart_buttons_small_32"
+        android:layout_height="@dimen/to_cart_button_small_48"
         android:padding="0dp"
         android:text="@string/minus"
         android:textColor="@android:color/white"
@@ -104,9 +106,9 @@
     <!-- Кнопка увеличения количества -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/bt_cart_plus"
-        style="@style/CartButtonStyle"
-        android:layout_width="@dimen/to_cart_buttons_small_40"
-        android:layout_height="@dimen/to_cart_buttons_small_40"
+        style="@style/ToCartButtonStyle"
+        android:layout_width="@dimen/plus_cart_buttons_small_32"
+        android:layout_height="@dimen/to_cart_button_small_48"
         android:padding="0dp"
         android:text="@string/plus"
         android:textColor="@android:color/white"
@@ -116,6 +118,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_extra_cart_buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="background_for_cart_info, bt_cart_minus, tv_total_price_in_cart, tv_number_in_cart" />
 
     <View
         android:layout_width="match_parent"

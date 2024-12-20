@@ -26,7 +26,7 @@
             android:background="@color/orange_transparent_50"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="8dp">
+            android:padding="@dimen/standart_margin_16">
 
             <!-- Кнопка назад -->
             <ImageButton
@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/back"
-                app:srcCompat="@drawable/ic_arrow_back_24"
+                app:srcCompat="@drawable/ic_arrow_back"
                 app:tint="@color/black" />
 
             <!-- Пустое пространство -->
@@ -70,8 +70,8 @@
             <!-- Правая кнопка -->
             <ImageButton
                 android:id="@+id/iv_add_to_favorite"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/toggle_favorite_button_28"
+                android:layout_height="@dimen/toggle_favorite_button_28"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/add_to_favorite"
                 app:srcCompat="@drawable/ic_favorite_inactive"
@@ -186,7 +186,7 @@
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fab_add_to_cart_price"
-        style="@style/CartButtonStyle"
+        style="@style/ToCartButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="@dimen/meal_details__cart_button_56"
         android:layout_gravity="bottom|center_horizontal"

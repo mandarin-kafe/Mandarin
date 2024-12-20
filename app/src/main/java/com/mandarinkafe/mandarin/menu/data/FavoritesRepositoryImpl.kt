@@ -11,5 +11,7 @@ class FavoritesRepositoryImpl(private val localStorage: LocalStorage) : Favorite
     override fun removeFromFavorites(meal: Meal) {
         localStorage.removeFromFavorites(meal.id)
     }
-
+    override fun getFavoriteIds() : List<String> {
+        return localStorage.getSavedFavorites().toList()
+    }
 }
