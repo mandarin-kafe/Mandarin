@@ -15,9 +15,7 @@ import com.mandarinkafe.mandarin.core.ui.RVItem
 import com.mandarinkafe.mandarin.databinding.ListMenuHeaderBinding
 import com.mandarinkafe.mandarin.databinding.ListMenuItemBinding
 import com.mandarinkafe.mandarin.databinding.ListMenuSubHeaderBinding
-import com.mandarinkafe.mandarin.menu.data.DtoToDomainConverter.Companion.PARENT_PIZZA_ID
 import com.mandarinkafe.mandarin.menu.domain.models.Meal
-
 import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
 import com.mandarinkafe.mandarin.menu.ui.MenuAdapter.MealClickListener
 
@@ -152,7 +150,7 @@ class MealItemDelegate(private val clickListener: MealClickListener) :
             val meal = itemRV.meal
             setMealData(meal)
             setOnClickListeners(meal)
-            binding.ivEditMeal.isVisible = meal.parentCategory == PARENT_PIZZA_ID
+            binding.ivEditMeal.isVisible = meal.isEditable
         }
 
         private fun setMealData(meal: Meal) = with(binding) {

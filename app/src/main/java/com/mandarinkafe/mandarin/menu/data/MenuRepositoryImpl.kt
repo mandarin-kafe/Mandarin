@@ -26,7 +26,7 @@ class MenuRepositoryImpl(
                 if (categories != null) {
                     emit(
                         Resource.Success(
-                            converter.menuDtoToDomain(categories)
+                            converter.setMenuStructure(categories)
                         )
                     )
                 } else {

@@ -10,8 +10,13 @@ import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
 
 class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
     private val storedFavorites = favoritesRepository.getFavoriteIds()
+    private val editableCategoryIds = setOf(
+        PizzaCategoriesIds.PIZZA35.id,
+        PizzaCategoriesIds.RIM.id,
+    )
 
-    private fun CategoryDto.toDomain(storedFavorites: List<String>) =
+
+    private fun CategoryDto.toDomain(storedFavorites: List<String>, parentCategory: String?) =
         MealCategory(
             id = id,
             name = name,
@@ -19,7 +24,7 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
                 it.toDomain(
                     storedFavorites = storedFavorites,
                     categoryId = id,
-                    parentCategory = id
+                    topCategoryId = parentCategory ?: id
                 )
             },
             subCategories = null,
@@ -29,7 +34,7 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
     private fun MealDto.toDomain(
         storedFavorites: List<String>,
         categoryId: String,
-        parentCategory: String
+        topCategoryId: String
     ): Meal? {
         try {
             val item = Meal(
@@ -43,7 +48,8 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
                 categoryId = categoryId,
                 isFavorite = storedFavorites.contains(itemId),
                 tags = tags,
-                parentCategory = parentCategory
+                topCategoryId = topCategoryId,
+                isEditable = checkIfEditable(categoryId)
 
             )
             return item
@@ -53,19 +59,27 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
         return null
     }
 
-
-    fun menuDtoToDomain(menuDto: List<CategoryDto>?): List<MealCategory> {
-        if (menuDto.isNullOrEmpty()) {
-            Log.e("DEBUG", "menuDto оказался null или пустым")
-            return emptyList() // Возвращаем пустой список, если данные отсутствуют
-        }
-        val menuDomain = menuDto.map {
-            it.toDomain(storedFavorites = storedFavorites)
-        }
-        return setMenuStructure(menuDomain)
+    private fun checkIfEditable(categoryId: String): Boolean {
+        return editableCategoryIds.contains(categoryId)
     }
 
-    private fun setMenuStructure(menu: List<MealCategory>): List<MealCategory> {
+
+    private fun menuDtoToDomain(menuDto: List<CategoryDto>?, parentCategory: String?): List<MealCategory> {
+        if (menuDto.isNullOrEmpty()) {
+            Log.e("DEBUG", "menuDto оказался null или пустым")
+            return emptyList()
+        }
+        val menuDomain = menuDto.map {
+            it.toDomain(storedFavorites = storedFavorites, parentCategory)
+        }
+        return menuDomain
+    }
+
+    fun setMenuStructure(menuDto: List<CategoryDto>?): List<MealCategory> {
+        if (menuDto.isNullOrEmpty()) {
+            Log.e("DEBUG", "menuDto оказался null или пустым")
+            return emptyList()
+        }
         return buildList<MealCategory> {
             this.add(
                 PIZZA_INDEX,
@@ -73,9 +87,8 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
                     id = PARENT_PIZZA_ID,
                     name = PIZZA_PARENT_CATEGORY_NAME,
                     meals = null,
-                    subCategories = menu.filter { category ->
-                        PizzaCategoriesIds.contains(category.id)
-                    },
+                    subCategories = menuDtoToDomain(menuDto, PARENT_PIZZA_ID)
+                        .filter { category -> PizzaCategoriesIds.contains(category.id) }, // Потом применяем filter
                     tabIcon = PIZZA_ICON
                 )
             )
@@ -86,13 +99,12 @@ class DtoToDomainConverter(favoritesRepository: FavoritesRepository) {
                     id = PARENT_SUSHI_ID,
                     name = SUSHI_PARENT_CATEGORY_NAME,
                     meals = null,
-                    subCategories = menu.filter { category ->
-                        SushiCategoriesIds.contains(category.id)
-                    },
+                    subCategories = menuDtoToDomain(menuDto, PARENT_SUSHI_ID)
+                        .filter { category -> SushiCategoriesIds.contains(category.id) }, // Потом применяем filter
                     tabIcon = SUSHI_ICON
                 )
             )
-            this += menu.filter { category ->
+            this += menuDtoToDomain(menuDto, null).filter { category ->
                 !SushiCategoriesIds.contains(category.id) && !PizzaCategoriesIds.contains(category.id)
             }
         }

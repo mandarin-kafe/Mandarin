@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.core.bundle.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,7 +31,7 @@ class MealDetailsFragment : Fragment() {
     private var _binding: FragmentMealDetailsBinding? = null
     private val binding get() = requireNotNull(_binding) { "Binding wasn't initialized" }
     private val viewModel by viewModel<MealDetailsViewModel> { parametersOf(meal) }
-    private val meal by lazy {
+    private val meal: Meal by lazy {
         gson.fromJson(
             requireArguments().getString(MEAL),
             Meal::class.java
@@ -70,7 +71,12 @@ class MealDetailsFragment : Fragment() {
         binding.apply {
             tvMealTitleTop.text = meal.name
             tvMealIngredients.text = meal.description
-            tvMealWeight.text = getString(R.string.meal_weight_template, meal.weight)
+            tvMealWeight.apply {
+                if (meal.weight == null || meal.weight == 0) isVisible = false
+                text = getString(R.string.meal_weight_template, meal.weight)
+            }
+
+
             tvMealPriceOriginal.text = getString(R.string.meal_price_template, meal.price)
 
 
