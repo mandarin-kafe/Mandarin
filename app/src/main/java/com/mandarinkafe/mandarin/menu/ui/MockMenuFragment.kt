@@ -9,12 +9,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayout
@@ -51,33 +51,15 @@ class MockMenuFragment : Fragment() {
 
 
     private var isClickAllowed = true
-    private var isTabSyncing = false
     private val handler = Handler(Looper.getMainLooper())
 
     private val viewModel: MockMenuViewModel by activityViewModel()
 
-
+    private var isTabSyncing = false
     private var autoScrollJob: Job? = null
     private var userInteractingWithViewPager = false
 
     private val banners = mockBannersList
-//    private var menuSubCategoriesPizza = arrayListOf<String>(
-//        "Классическая",
-//        "Римская",
-//        "Неаполитано",
-//        "Чикаго",
-//        "Кальцоне",
-//        "Фокачча"
-//    )
-//    private var menuSubCategoriesSushi = arrayListOf<String>(
-//        "Роллы",
-//        "Маки-суши",
-//        "Нигири",
-//        "Гунканы",
-//        "Спайси",
-//        "Запеченные роллы",
-//        "Горячие роллы", "Онигири", "Сеты"
-//    )
 
 
     override fun onCreateView(
@@ -96,42 +78,10 @@ class MockMenuFragment : Fragment() {
         setupBannersViewPager()
         setPlaceholderCLickListeners()
         setRvAdapter()
+        viewModel.getMenu()
 
-
-            viewModel.getMenu()
-
-            viewModel.getScreenState().observe(viewLifecycleOwner)
-            { state -> renderMenuScreen(state) }
-
-
-
-    }
-
-
-    override fun onResume() {
-        super.onResume()
-
-        val tabLayoutMain = binding.tabLayoutCategories
-        val tabLayoutSub = binding.tabLayoutSubCategories
-
-        for (i in 0 until tabLayoutMain.tabCount) {
-            val tab = tabLayoutMain.getTabAt(i)
-            Log.d("TabLayout", "Вкладка $i: ${tab?.text ?: "Без текста"}")
-            tabLayoutMain.visibility = View.VISIBLE
-            tabLayoutSub.visibility = View.VISIBLE
-        }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        binding.tabLayoutCategories.removeAllTabs()
-        stopAutoScrollBanners()
-
-        _binding = null
-        _bannersAdapter = null
-        _menuAdapter = null
-
-
+        viewModel.getScreenState().observe(viewLifecycleOwner)
+        { state -> renderMenuScreen(state) }
     }
 
     private fun renderMenuScreen(state: MockMenuViewModel.ScreenState) {
@@ -146,28 +96,33 @@ class MockMenuFragment : Fragment() {
 
             is MockMenuViewModel.ScreenState.Content -> {
                 setMenuVisibility(VisibilityStatus.VISIBLE)
+
                 menuItems = state.menuItems
                 if (!menuItems.isNullOrEmpty()) {
                     setTabs(menuItems!!)
+                    menuAdapter.setMenuList(menuItems!!)
                     setScrollSync(menuItems!!)
                     addOnTabSelectedListener(menuItems!!)
-                    menuAdapter.setMenuList(menuItems!!)
                 }
-
-//                val defaultTab = binding.tabLayoutCategories.getTabAt(0)
-//                if (defaultTab != null) {
-//                    setSubTabs(category = state.menuItems[0] as MenuRVItem.HeaderItem)
-//                    Log.d("DEBUG TABS", "Вызываю setSubTabs для элемента 0 в menuItems")
-//                }
             }
         }
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.tabLayoutCategories.removeAllTabs()
+        stopAutoScrollBanners()
+        _binding = null
+        _bannersAdapter = null
+        _menuAdapter = null
     }
 
 
     private fun setPlaceholderCLickListeners() {
         binding.placeholder.apply {
             bvPlaceholderRetry.setOnClickListener { viewModel.getMenu() }
-            bvPlaceholderCall.setOnClickListener { //TODO запустить интент  на звонок по номеру тел
+            bvPlaceholderCall.setOnClickListener {
             }
         }
     }
@@ -189,21 +144,14 @@ class MockMenuFragment : Fragment() {
     private fun setupBannersViewPager() {
         _bannersAdapter = BannerAdapter(banners) { -> onBannerCLick() }
         binding.viewPagerBanners.adapter = bannersAdapter
-        setViewPagerHeight()
-        startAutoScrollBanners()
-
-    }
-
-    private fun onBannerCLick() {
-
-    }
-
-    private fun setViewPagerHeight() {
-        val screenWidth = resources.displayMetrics.widthPixels // Получаем ширину экрана
+        val screenWidth = resources.displayMetrics.widthPixels
         val aspectRatio = 2.91f
-
         val height = (screenWidth / aspectRatio).toInt()
         binding.viewPagerBanners.layoutParams.height = height
+        startAutoScrollBanners()
+    }
+
+    private fun onBannerCLick() { //тут может быть обработка кликов по баннерам
     }
 
 
@@ -250,7 +198,7 @@ class MockMenuFragment : Fragment() {
                     .asDrawable()
                     .load(url)
                     .submit()
-                    .get() // Блокирующий вызов, который возвращает Drawable
+                    .get()
             } catch (e: Exception) {
                 Log.e("DEBUG TABS ERROR", "Ошибка загрузки иконки: $e")
                 null
@@ -263,7 +211,7 @@ class MockMenuFragment : Fragment() {
     ) {
         Log.d(
             "DEBUG",
-            "Вызов метода addOnTabSelectedListener для усановки OnTabSelectedListener"
+            "Вызов метода addOnTabSelectedListener для установки OnTabSelectedListener"
         )
         binding.tabLayoutCategories.addOnTabSelectedListener(object :
             TabLayout.OnTabSelectedListener {
@@ -273,13 +221,23 @@ class MockMenuFragment : Fragment() {
                         "DEBUG",
                         "Вызов onTabSelected для вкладки ${tab.text.toString()}, значение isTabSyncing = $isTabSyncing"
                     )
-                    //                    setSubTabs()  TODO
+                    val currentHeaderIndex = menuItems.indexOfFirst {
+                        it is MenuRVItem.HeaderItem && it.categoryName == tab.text.toString()
+                    }
+                    val currentHeader = menuItems[currentHeaderIndex]
+                    setSubTabs(currentHeader as MenuRVItem.HeaderItem)
+
+                    if (isTabSyncing) return
+
+                    val headerPosition = menuItems.indexOfFirst {
+                        it is MenuRVItem.HeaderItem && it.categoryName == tab.text.toString()
+
+                    }
+                    if (headerPosition != -1) {
+                        scrollToCategory(headerPosition)
+                    }
                 }
-                if (isTabSyncing) return
-                val position = tab?.position ?: 0
-                if (tab != null) {
-                    scrollToCategory(position, menuItems)
-                }
+
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -291,32 +249,68 @@ class MockMenuFragment : Fragment() {
         })
     }
 
-    private fun setScrollSync(
-        menuItems: List<RVItem>
-    ) {
-        //todo
+    private fun setScrollSync(menuItems: List<RVItem>) {
+        Log.d("DEBUG", "Вызвала метод setScrollSync для установки addOnScrollListener")
+        binding.rvMenu.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (isTabSyncing) return // Игнорируем вызовы, если синхронизация уже идёт
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+
+                val firstVisiblePosition = layoutManager.findFirstCompletelyVisibleItemPosition()
+                val lastVisiblePosition = layoutManager.findLastCompletelyVisibleItemPosition()
+
+                if (firstVisiblePosition != RecyclerView.NO_POSITION) {
+                    for (position in firstVisiblePosition..lastVisiblePosition) {
+                        val currentItem = menuItems[position]
+                        val categoryName = when (currentItem) {
+                            is MenuRVItem.HeaderItem -> currentItem.categoryName
+                            is MenuRVItem.MealItem, is MenuRVItem.SubHeaderItem -> {
+                                // Найти ближайший HeaderItem сверху
+                                findNearestHeader(menuItems, position)
+                            }
+                            else -> null
+                        }
+
+                        if (categoryName != null) {
+                            val headerIndex = menuItems.indexOfFirst {
+                                it is MenuRVItem.HeaderItem && it.categoryName == categoryName
+                            }
+                            if (headerIndex != -1 && headerIndex != binding.tabLayoutCategories.selectedTabPosition) {
+                                isTabSyncing = true
+
+                                val tab = binding.tabLayoutCategories.getTabAt(headerIndex)
+                                tab?.select()
+                                isTabSyncing = false
+                            }
+                            break
+                        }
+                    }
+                }
+            }
+        })
     }
 
 
-//    private fun subTabsManager(category: String) {
-//        Log.d("DEBUG", "Вызов  subTabsManager для $category")
-//        //временный метод для проверки вёрстки. Нужно будет сделать нормальный,
-//        // когда поймём структуру их фида и как вытащить субкатегории и родительскую категорию.
-//
-//        when ((category.lowercase())) {
-//            "pizza", "пицца" -> {
-//                Log.d("DEBUG", "вызываю setSubTabs для пиццы")
-//                setSubTabs(menuSubCategoriesPizza)
-//            }
-//
-//            "sushi", "суши и роллы" -> {
-//                Log.d("DEBUG", "вызываю setSubTabs для суши")
-//                setSubTabs(menuSubCategoriesSushi)
-//            }
-//
-//            else -> binding.tabLayoutSubCategories.isVisible = false
-//        }
-//    }
+    private fun findNearestHeader(menuItems: List<RVItem>, position: Int): String? {
+        for (i in position downTo 0) {
+            val item = menuItems[i]
+            if (item is MenuRVItem.HeaderItem) {
+                return item.categoryName
+            }
+        }
+        return null
+    }
+
+
+    private fun scrollToCategory(
+        position: Int
+    ) {
+        val layoutManager = binding.rvMenu.layoutManager as LinearLayoutManager
+        val offset = resources.getDimensionPixelSize(R.dimen.recycler_view_offset_1)
+        layoutManager.scrollToPositionWithOffset(position, offset)
+    }
+
 
     private fun setSubTabs(category: MenuRVItem.HeaderItem) {
         val tabLayoutSub = binding.tabLayoutSubCategories
@@ -325,7 +319,7 @@ class MockMenuFragment : Fragment() {
 
         if (subCategories.isNullOrEmpty()) {
             tabLayoutSub.isVisible = false
-            Log.e("DEBUG SUB TABS", "Список подкатегорий пуст или null!")
+            Log.e("DEBUG SUB TABS", "Список подкатегорий пуст или null")
             return
         } else {
             subCategories.forEach { it ->
@@ -336,9 +330,7 @@ class MockMenuFragment : Fragment() {
             // Проверяем слушатели, чтобы они не добавлялись повторно
             if (tabLayoutSub.tabCount > 0 && tabLayoutSub.getTabAt(0)?.tag == null) {
                 tabLayoutSub.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-                    override fun onTabSelected(tab: TabLayout.Tab?) {
-                        // TODO Логика выбора подкатегории
-                    }
+                    override fun onTabSelected(tab: TabLayout.Tab?) {}
 
                     override fun onTabUnselected(tab: TabLayout.Tab?) {}
                     override fun onTabReselected(tab: TabLayout.Tab?) {}
@@ -347,14 +339,6 @@ class MockMenuFragment : Fragment() {
         }
     }
 
-
-    private fun scrollToCategory(
-        position: Int,
-        menuItems: List<RVItem>
-    ) {
-        //TODO
-
-    }
 
     private fun showMealDetails(meal: Meal) {
         findNavController().navigate(
@@ -400,17 +384,9 @@ class MockMenuFragment : Fragment() {
                 LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false)
             adapter = menuAdapter
         }
-
         return menuAdapter
     }
 
-    private fun makeShortToast(toastText: String) {
-        Toast.makeText(
-            requireContext(),
-            toastText,
-            Toast.LENGTH_SHORT
-        ).show()
-    }
 
     private fun setProgressBarVisibility(status: VisibilityStatus) {
         binding.apply {
@@ -492,6 +468,7 @@ class MockMenuFragment : Fragment() {
             HIDDEN
         }
 
+        private const val TAB_SYNC_DEBOUNCE = 200L
         private const val CLICK_DEBOUNCE_DELAY = 1000L
         private const val BANNER_AUTO_SCROLL_DELAY = 4000L
     }
