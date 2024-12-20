@@ -7,20 +7,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.databinding.ItemCartBinding
-import com.mandarinkafe.mandarin.menu.domain.models.Item
+import com.mandarinkafe.mandarin.menu.domain.models.Meal
 
-class CartAdapter(private val items: List<Item>) : RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
+class CartAdapter(private val meals: List<Meal>) : RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
 
     class CartViewHolder(item: View) : RecyclerView.ViewHolder(item) {
         val binding = ItemCartBinding.bind(item)
 
-        fun bind(item: Item) = with(binding) {
-            tvMealTitle.text = item.name
-            tvMealIngredients.text = item.description
-            tvMealWeight.text = item.weight.toString() + " г"
-            cartPrice.text = item.price.toString() + " ₽"
+        fun bind(meal: Meal) = with(binding) {
+            tvMealTitle.text = meal.name
+            tvMealIngredients.text = meal.description
+            tvMealWeight.text = meal.weight.toString() + " г"
+            cartPrice.text = meal.price.toString() + " ₽"
             Glide.with(itemView.context)
-                .load(item.imageUrl)
+                .load(meal.imageUrl)
                 .into(ivMealPicture)
         }
     }
@@ -31,10 +31,10 @@ class CartAdapter(private val items: List<Item>) : RecyclerView.Adapter<CartAdap
     }
 
     override fun onBindViewHolder(holder: CartViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(meals[position])
     }
 
     override fun getItemCount(): Int {
-        return items.size
+        return meals.size
     }
 }

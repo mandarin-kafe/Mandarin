@@ -1,11 +1,12 @@
 package com.mandarinkafe.mandarin.menu.domain.api
 
-import com.mandarinkafe.mandarin.menu.domain.models.Item
+import com.mandarinkafe.mandarin.menu.domain.models.Meal
 
 interface FavoritesRepository {
-    fun addToFavorites(item: Item)
-    fun removeFromFavorites(item: Item)
+    fun addToFavorites(meal: Meal)
+    fun removeFromFavorites(meal: Meal)
     fun getFavoriteIds() : List<String>
+
 }
 
 

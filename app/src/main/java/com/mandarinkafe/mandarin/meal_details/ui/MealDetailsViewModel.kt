@@ -5,11 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mandarinkafe.mandarin.menu.domain.api.FavoritesInteractor
-import com.mandarinkafe.mandarin.menu.domain.models.Item
+import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import kotlinx.coroutines.launch
 
 class MealDetailsViewModel(
-    private var item: Item,
+    private var meal: Meal,
     private val favoritesInteractor: FavoritesInteractor
 ) : ViewModel() {
 
@@ -20,14 +20,14 @@ class MealDetailsViewModel(
 
     fun toggleFavorite() {
         viewModelScope.launch {
-            if (item.isFavorite) {
-                favoritesInteractor.removeFromFavorites(item)
+            if (meal.isFavorite) {
+                favoritesInteractor.removeFromFavorites(meal)
             } else {
-                favoritesInteractor.addToFavorites(item)
+                favoritesInteractor.addToFavorites(meal)
             }
         }
-        isFavoriteLiveData.value = !item.isFavorite
-        val newMeal = item.copy(isFavorite = !item.isFavorite)
-        this.item = newMeal
+        isFavoriteLiveData.value = !meal.isFavorite
+        val newMeal = meal.copy(isFavorite = !meal.isFavorite)
+        this.meal = newMeal
     }
 }

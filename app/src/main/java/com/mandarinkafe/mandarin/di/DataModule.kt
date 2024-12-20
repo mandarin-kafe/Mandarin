@@ -2,7 +2,7 @@ package com.mandarinkafe.mandarin.di
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.google.gson.Gson
+import com.mandarinkafe.mandarin.menu.data.DtoToDomainConverter
 import com.mandarinkafe.mandarin.menu.data.FavoritesRepositoryImpl
 import com.mandarinkafe.mandarin.menu.data.LocalStorage
 import com.mandarinkafe.mandarin.menu.data.MenuRepositoryImpl
@@ -41,7 +41,14 @@ val dataModule = module {
         FavoritesRepositoryImpl(localStorage = get())
     }
     single<MenuRepository> {
-        MenuRepositoryImpl(networkClient = get(), favoritesRepository = get())
+        MenuRepositoryImpl(networkClient = get(), converter = get())
     }
-    single<Gson> { Gson() }
+    single<MenuRepository> {
+        MenuRepositoryImpl(networkClient = get(), converter = get())
+    }
+    single<DtoToDomainConverter> {
+        DtoToDomainConverter(
+            favoritesRepository = get()
+        )
+    }
 }

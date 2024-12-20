@@ -14,12 +14,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
-import com.mandarinkafe.mandarin.MainActivity
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.cart.Cart
+import com.mandarinkafe.mandarin.core.ui.MainActivity
 import com.mandarinkafe.mandarin.databinding.FragmentMealDetailsBinding
-import com.mandarinkafe.mandarin.menu.domain.models.Item
-import com.mandarinkafe.mandarin.menu.domain.models.mockAdditionalsList
+import com.mandarinkafe.mandarin.menu.domain.models.Meal
+import com.mandarinkafe.mandarin.menu.domain.models.mockPizzaAddsCheeseList
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import org.koin.java.KoinJavaComponent.getKoin
@@ -29,11 +29,11 @@ class MealDetailsFragment : Fragment() {
     private val gson: Gson by lazy { Gson() }
     private var _binding: FragmentMealDetailsBinding? = null
     private val binding get() = requireNotNull(_binding) { "Binding wasn't initialized" }
-    private val viewModel by viewModel<MealDetailsViewModel> { parametersOf(item) }
-    private val item by lazy {
+    private val viewModel by viewModel<MealDetailsViewModel> { parametersOf(meal) }
+    private val meal by lazy {
         gson.fromJson(
             requireArguments().getString(MEAL),
-            Item::class.java
+            Meal::class.java
         )
     }
     private var mealPrice = 0
@@ -66,16 +66,16 @@ class MealDetailsFragment : Fragment() {
     private fun setMealData() {
         val cornerRadius =
             resources.getDimensionPixelSize(R.dimen.image_corner_radius_2)
-        mealPrice = item.price
+        mealPrice = meal.price
         binding.apply {
-            tvMealTitleTop.text = item.name
-            tvMealIngredients.text = item.description
-            tvMealWeight.text = getString(R.string.meal_weight_template, item.weight)
-            tvMealPriceOriginal.text = getString(R.string.meal_price_template, item.price)
+            tvMealTitleTop.text = meal.name
+            tvMealIngredients.text = meal.description
+            tvMealWeight.text = getString(R.string.meal_weight_template, meal.weight)
+            tvMealPriceOriginal.text = getString(R.string.meal_price_template, meal.price)
 
 
             Glide.with(requireContext())
-                .load(item.imageUrl)
+                .load(meal.imageUrl)
                 .centerCrop()
                 .transform(RoundedCorners(cornerRadius))
                 .placeholder(R.drawable.logo_orange)
@@ -106,10 +106,10 @@ class MealDetailsFragment : Fragment() {
     private fun onCartButtonClick() {
         Toast.makeText(
             requireContext(),
-            "Добавляю в корзину ${item.name}, $mealPrice ₽",
+            "Добавляю в корзину ${meal.name}, $mealPrice ₽",
             Toast.LENGTH_SHORT
         ).show()
-        Cart.addItem(item)
+        Cart.addItem(meal)
         (requireActivity() as MainActivity).updateCartAdapter()
 
         findNavController().popBackStack()
@@ -139,10 +139,10 @@ class MealDetailsFragment : Fragment() {
         val recyclerView = binding.rvAdds
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = MealAdditionalsAdapter(
-            mockAdditionalsList,
+            mockPizzaAddsCheeseList,
             object : MealAdditionalsAdapter.AddsClickListener {
 
-                override fun plusToCartClick(additional: Item) {
+                override fun plusToCartClick(additional: Meal) {
                     //TODO сделать логику корзины для добавок к блюду
                     mealPrice += additional.price
                     binding.fabAddToCartPrice.text =
@@ -150,7 +150,7 @@ class MealDetailsFragment : Fragment() {
 
                 }
 
-                override fun minusToCartClick(additional: Item) {
+                override fun minusToCartClick(additional: Meal) {
                     //TODO сделать логику корзины для добавок к блюду
                     mealPrice -= additional.price
                     binding.fabAddToCartPrice.text =
@@ -180,7 +180,7 @@ class MealDetailsFragment : Fragment() {
     companion object {
         const val MEAL = "meal"
         private val gson: Gson = getKoin().get()
-        fun createArgs(item: Item): Bundle =
-            bundleOf(MEAL to gson.toJson(item))
+        fun createArgs(meal: Meal): Bundle =
+            bundleOf(MEAL to gson.toJson(meal))
     }
 }

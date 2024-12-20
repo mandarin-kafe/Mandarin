@@ -1,15 +1,14 @@
-package com.mandarinkafe.mandarin
+package com.mandarinkafe.mandarin.menu.ui
 
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mandarinkafe.mandarin.core.ui.RVItem
 import com.mandarinkafe.mandarin.menu.domain.api.FavoritesInteractor
 import com.mandarinkafe.mandarin.menu.domain.api.MenuInteractor
-import com.mandarinkafe.mandarin.menu.domain.models.Item
-import com.mandarinkafe.mandarin.menu.domain.models.ItemCategory
-import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
+import com.mandarinkafe.mandarin.menu.domain.models.Meal
 import kotlinx.coroutines.launch
 
 class SharedViewModel(
@@ -17,7 +16,7 @@ class SharedViewModel(
     private val favoritesInteractor: FavoritesInteractor
 ) : ViewModel() {
 
-    private var menuItems = mutableListOf<MenuItem>()
+
     private var screenState = MutableLiveData<ScreenState>(ScreenState.Loading)
     fun getScreenState(): LiveData<ScreenState> = screenState
 
@@ -34,14 +33,9 @@ class SharedViewModel(
         }
     }
 
-    private fun processMenuResult(menu: List<ItemCategory>?, errorMessage: String?) {
+    private fun processMenuResult(menu: List<RVItem>?, errorMessage: String?) {
         if (!menu.isNullOrEmpty()) {
-            menu.forEach { category ->
-                menuItems.add(MenuItem.Category(category.name))
-                menuItems.addAll(category.items.map { MenuItem.MealItem(it) })
-
-            }
-            screenState.postValue(ScreenState.Content(menu, menuItems))
+            screenState.postValue(ScreenState.Content(menu))
         }
         if (errorMessage != null) {
             screenState.postValue(ScreenState.Error)
@@ -49,13 +43,13 @@ class SharedViewModel(
         }
     }
 
-    fun toggleFavorite(item: Item) {
-        if (item.isFavorite) {
-            favoritesInteractor.removeFromFavorites(item)
-        } else {
-            favoritesInteractor.addToFavorites(item)
-        }
 
+    fun toggleFavorite(meal: Meal) {
+        if (meal.isFavorite) {
+            favoritesInteractor.removeFromFavorites(meal)
+        } else {
+            favoritesInteractor.addToFavorites(meal)
+        }
     }
 
 }
@@ -63,7 +57,7 @@ class SharedViewModel(
 sealed interface ScreenState {
     data object Loading : ScreenState
     data object Error : ScreenState
-    data class Content(var menu: List<ItemCategory>, var menuItems: MutableList<MenuItem>) :
+    data class Content(var menuItems: List<RVItem>) :
         ScreenState
 }
 

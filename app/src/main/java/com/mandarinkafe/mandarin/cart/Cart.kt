@@ -1,15 +1,15 @@
 package com.mandarinkafe.mandarin.cart
 
-import com.mandarinkafe.mandarin.menu.domain.models.Item
+import com.mandarinkafe.mandarin.menu.domain.models.Meal
 
 object Cart {
-    val items: MutableList<Item> = mutableListOf()
+    val meals: MutableList<Meal> = mutableListOf()
 
-    fun addItem(item: Item) {
-        items.add(item)
+    fun addItem(meal: Meal) {
+        meals.add(meal)
     }
 
     fun clear() {
-        items.clear()
+        meals.clear()
     }
 }

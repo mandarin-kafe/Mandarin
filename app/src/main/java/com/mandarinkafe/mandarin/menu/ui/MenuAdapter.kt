@@ -1,206 +1,243 @@
 package com.mandarinkafe.mandarin.menu.ui
 
 import android.annotation.SuppressLint
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.hannesdorfmann.adapterdelegates4.AdapterDelegate
+import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
 import com.mandarinkafe.mandarin.R
+import com.mandarinkafe.mandarin.core.ui.RVItem
+import com.mandarinkafe.mandarin.databinding.ListMenuHeaderBinding
 import com.mandarinkafe.mandarin.databinding.ListMenuItemBinding
-import com.mandarinkafe.mandarin.menu.domain.models.Item
-import com.mandarinkafe.mandarin.menu.domain.models.MenuItem
+import com.mandarinkafe.mandarin.databinding.ListMenuSubHeaderBinding
+import com.mandarinkafe.mandarin.menu.data.DtoToDomainConverter.Companion.PARENT_PIZZA_ID
+import com.mandarinkafe.mandarin.menu.domain.models.Meal
+
+import com.mandarinkafe.mandarin.menu.domain.models.MenuRVItem
+import com.mandarinkafe.mandarin.menu.ui.MenuAdapter.MealClickListener
 
 
 class MenuAdapter(
     private val clickListener: MealClickListener
-) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private var isClickAllowed = true
-    private val handler = Handler(Looper.getMainLooper())
-    private var items: List<MenuItem> = listOf()
+) : ListDelegationAdapter<List<RVItem>>() {
+    init {
+        delegatesManager.apply {
+            addDelegate(MenuHeaderDelegate())
+            addDelegate(MenuSubHeaderDelegate())
+            addDelegate(MealItemDelegate(clickListener))
+        }
+    }
 
-    fun setMenuList(menuData: List<MenuItem>) {
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun setMenuList(menuData: List<RVItem>) {
         items = menuData
         notifyDataSetChanged()
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return when (items[position]) {
-            is MenuItem.MealItem -> VIEW_TYPE_MEAL
-            is MenuItem.SubCategory -> VIEW_TYPE_SUB_HEADER
-            is MenuItem.Category -> VIEW_TYPE_PARENT_HEADER
+    interface MealClickListener {
+        fun onMealClick(meal: Meal)
+        fun onFavoriteToggleClick(meal: Meal, position: Int)
+        fun onAddToCartClick(meal: Meal)
+        fun onEditClick(meal: Meal)
+        fun plusToCartClick(meal: Meal)
+        fun minusToCartClick(meal: Meal)
+
+    }
+}
+
+
+class MenuHeaderDelegate : AdapterDelegate<List<RVItem>>() {
+    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
+        val binding = ListMenuHeaderBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return MenuHeaderHolder(binding)
+    }
+
+    override fun isForViewType(items: List<RVItem>, position: Int): Boolean {
+        return items[position] is MenuRVItem.HeaderItem
+    }
+
+    override fun onBindViewHolder(
+        items: List<RVItem>,
+        position: Int,
+        holder: RecyclerView.ViewHolder,
+        payloads: List<Any>
+    ) {
+        (holder as MenuHeaderHolder).bind(items[position] as MenuRVItem.HeaderItem)
+    }
+
+    class MenuHeaderHolder(private val binding: ListMenuHeaderBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: MenuRVItem.HeaderItem) {
+            binding.tvCategoryTitle.text = item.categoryName
         }
     }
+}
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when (viewType) {
-            VIEW_TYPE_MEAL -> {
-                val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.list_menu_item, parent, false)
-                MealViewHolder(view, clickListener)
-            }
+class MenuSubHeaderDelegate : AdapterDelegate<List<RVItem>>() {
+    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
+        val binding = ListMenuSubHeaderBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return MenuSubHeaderHolder(binding)
+    }
 
-            VIEW_TYPE_SUB_HEADER -> {
-                val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.list_menu_header, parent, false)
-                HeaderViewHolder(view)
-            }
+    override fun isForViewType(items: List<RVItem>, position: Int): Boolean {
+        return items[position] is MenuRVItem.SubHeaderItem
+    }
 
-            VIEW_TYPE_PARENT_HEADER -> {
-                val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.list_menu_parent_header, parent, false)
-                HeaderViewHolder(view)
-            }
+    override fun onBindViewHolder(
+        items: List<RVItem>,
+        position: Int,
+        holder: RecyclerView.ViewHolder,
+        payloads: List<Any>
+    ) {
+        (holder as MenuSubHeaderHolder).bind(items[position] as MenuRVItem.SubHeaderItem)
+    }
 
-            else -> throw IllegalArgumentException("Invalid view type")
+    class MenuSubHeaderHolder(private val binding: ListMenuSubHeaderBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: MenuRVItem.SubHeaderItem) {
+            binding.tvCategoryTitle.text = item.categoryName
         }
     }
+}
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (val item = items[position]) {
-            is MenuItem.MealItem -> {
-                (holder as MealViewHolder).bind(item.meal)
-            }
-
-            is MenuItem.SubCategory -> (holder as HeaderViewHolder).bind(item)
-            is MenuItem.Category -> (holder as HeaderViewHolder).bind(item)
-
-
-        }
+class MealItemDelegate(private val clickListener: MealClickListener) :
+    AdapterDelegate<List<RVItem>>() {
+    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
+        val binding =
+            ListMenuItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return MealItemHolder(clickListener, binding)
     }
 
-    override fun getItemCount(): Int {
-        return items.size
+    override fun isForViewType(items: List<RVItem>, position: Int): Boolean {
+        return items[position] is MenuRVItem.MealItem
     }
 
-    private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
-        }
-        return current
+    override fun onBindViewHolder(
+        items: List<RVItem>,
+        position: Int,
+        holder: RecyclerView.ViewHolder,
+        payloads: List<Any>
+    ) {
+        (holder as MealItemHolder).bind(items[position] as MenuRVItem.MealItem)
     }
 
 
-    class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val headerTextView: TextView = itemView.findViewById(R.id.tv_category_title)
-        fun bind(category: MenuItem.Category) {
-            headerTextView.text = category.categoryName
-        }
-    }
-
-    class MealViewHolder(
-        private val parentView: View,
-        private val clickListener: MealClickListener
+    class MealItemHolder(
+        private val clickListener: MealClickListener,
+        private val binding: ListMenuItemBinding
     ) :
-        RecyclerView.ViewHolder(parentView) {
-        private val binding = ListMenuItemBinding.bind(parentView)
+        RecyclerView.ViewHolder(binding.root) {
+        private val cornerRadius =
+            itemView.context.resources.getDimensionPixelSize(R.dimen.image_corner_radius_2)
+
         private var numberInCart = 0
         // TODO временная переменная! брать цифру из логики корзины, а то холдер одну и ту же переменную привязывает к разным товарам
 
-        private val cornerRadius =
-            this@MealViewHolder.parentView.resources.getDimensionPixelSize(R.dimen.image_corner_radius_2)
 
-        fun bind(item: Item) {
-            setMealData(item)
-            setOnClickListeners(item)
-            if (item.categoryId != "pizza") {
-                binding.ivEditMeal.isVisible = false
-            } else {
-                binding.ivEditMeal.isVisible = true
-            }
+        fun bind(itemRV: MenuRVItem.MealItem) {
+            val meal = itemRV.meal
+            setMealData(meal)
+            setOnClickListeners(meal)
+            binding.ivEditMeal.isVisible = meal.parentCategory == PARENT_PIZZA_ID
         }
 
-        private fun setMealData(item: Item) = with(binding) {
-            tvMealTitle.text = item.name
+        private fun setMealData(meal: Meal) = with(binding) {
+            tvMealTitle.text = meal.name
 
-            if (item.description.isNullOrEmpty()) {
+            if (meal.description.isNullOrEmpty()) {
                 tvMealIngredients.isVisible = false
             } else {
                 tvMealIngredients.isVisible = true
-                tvMealIngredients.text = item.description
+                tvMealIngredients.text = meal.description
             }
-            if (item.weight == null || item.weight == 0) {
+            if (meal.weight == null || meal.weight == 0) {
                 tvMealWeight.isVisible = false
             } else {
                 tvMealWeight.isVisible = true
                 tvMealWeight.text =
-                    parentView.context.getString(R.string.meal_weight_template, item.weight)
+                    itemView.context.getString(R.string.meal_weight_template, meal.weight)
             }
             btAddToCartPrice.text =
-                parentView.context.getString(R.string.meal_price_template, item.price)
+                itemView.context.getString(R.string.meal_price_template, meal.price)
 
-            Glide.with(parentView)
-                .load(item.imageUrl)
+            Glide.with(itemView)
+                .load(meal.imageUrl)
                 .centerCrop()
                 .transform(RoundedCorners(cornerRadius))
                 .placeholder(R.drawable.logo_orange)
                 .into(ivMealPicture)
             tvMealIngredients.requestLayout()
 
-            ivAddToFavorite.setImageResource(getFavoriteDrawable(item.isFavorite))
+            ivAddToFavorite.setImageResource(getFavoriteDrawable(meal.isFavorite))
         }
 
-        private fun setOnClickListeners(item: Item) = with(binding) {
-            parentView.setOnClickListener { clickListener.onMealClick(item) }
+
+        private fun setOnClickListeners(meal: Meal) = with(binding) {
+            itemView.setOnClickListener { clickListener.onMealClick(meal) }
             ivAddToFavorite.setOnClickListener {
-                clickListener.onFavoriteToggleClick(item, getBindingAdapterPosition())
-                toggleFavorite(item)
+                clickListener.onFavoriteToggleClick(meal, getBindingAdapterPosition())
+                toggleFavorite(meal)
             }
-            ivEditMeal.setOnClickListener { clickListener.onEditClick(item) }
+            ivEditMeal.setOnClickListener { clickListener.onEditClick(meal) }
             btAddToCartPrice.setOnClickListener {
-                clickListener.onAddToCartClick(item)
-                onPlusClick(item)
+                clickListener.onAddToCartClick(meal)
+                onPlusClick(meal)
                 extraCartButtonsManager(inCart = true)
             }
 
             btCartMinus.setOnClickListener {
-                clickListener.minusToCartClick(item)
-                onMinusClick(item)
+                clickListener.minusToCartClick(meal)
+                onMinusClick(meal)
             }
             btCartPlus.setOnClickListener {
-                clickListener.plusToCartClick(item)
-                onPlusClick(item)
+                clickListener.plusToCartClick(meal)
+                onPlusClick(meal)
             }
         }
 
-        private fun onPlusClick(item: Item) = with(binding) {
+        private fun onPlusClick(item: Meal) = with(binding) {
             tvNumberInCart.text =
-                parentView.context.getString(
+                itemView.context.getString(
                     R.string.meal_in_cart_count_template,
                     ++numberInCart
                 )
 
             tvTotalPriceInCart.text =
-                parentView.context.getString(
+                itemView.context.getString(
                     R.string.meal_price_template,
                     item.price * numberInCart
                 )
         }
 
-        private fun onMinusClick(item: Item) = with(binding) {
+        private fun onMinusClick(meal: Meal) = with(binding) {
 
             tvNumberInCart.text =
-                parentView.context.getString(
+                itemView.context.getString(
                     R.string.meal_in_cart_count_template,
                     --numberInCart
                 )
             tvTotalPriceInCart.text =
-                parentView.context.getString(
+                itemView.context.getString(
                     R.string.meal_price_template,
-                    item.price * numberInCart
+                    meal.price * numberInCart
                 )
             if (numberInCart == 0) {
                 extraCartButtonsManager(inCart = false)
             }
-
 
         }
 
@@ -212,8 +249,8 @@ class MenuAdapter(
         }
 
         @SuppressLint("UseCompatLoadingForDrawables")
-        private fun toggleFavorite(item: Item) {
-            val newDrawableId = getFavoriteDrawable(!item.isFavorite)
+        private fun toggleFavorite(meal: Meal) {
+            val newDrawableId = getFavoriteDrawable(!meal.isFavorite)
 
             binding.ivAddToFavorite.apply {
                 animate()
@@ -229,7 +266,7 @@ class MenuAdapter(
                     }
                     .start()
             }
-            item.isFavorite = !item.isFavorite
+            meal.isFavorite = !meal.isFavorite
         }
 
         private fun extraCartButtonsManager(inCart: Boolean) {
@@ -245,23 +282,7 @@ class MenuAdapter(
                 }
             }
         }
-    }
-
-    interface MealClickListener {
-        fun onMealClick(item: Item)
-        fun onFavoriteToggleClick(item: Item, position: Int)
-        fun onAddToCartClick(item: Item)
-        fun onEditClick(item: Item)
-        fun plusToCartClick(item: Item)
-        fun minusToCartClick(item: Item)
-
-    }
-
-    private companion object {
-        private const val CLICK_DEBOUNCE_DELAY = 30L
-        const val VIEW_TYPE_PARENT_HEADER = 0
-        const val VIEW_TYPE_MEAL = 1
-        const val VIEW_TYPE_SUB_HEADER = 2
 
     }
 }
+

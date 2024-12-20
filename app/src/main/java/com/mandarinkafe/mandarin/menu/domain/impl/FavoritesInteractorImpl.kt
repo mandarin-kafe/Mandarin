@@ -2,13 +2,13 @@ package com.mandarinkafe.mandarin.menu.domain.impl
 
 import com.mandarinkafe.mandarin.menu.domain.api.FavoritesInteractor
 import com.mandarinkafe.mandarin.menu.domain.api.FavoritesRepository
-import com.mandarinkafe.mandarin.menu.domain.models.Item
+import com.mandarinkafe.mandarin.menu.domain.models.Meal
 
 class FavoritesInteractorImpl(private val repository: FavoritesRepository): FavoritesInteractor {
-    override fun addToFavorites(item: Item) {
-        repository.addToFavorites(item) }
+    override fun addToFavorites(meal: Meal) {
+        repository.addToFavorites(meal) }
 
-    override fun removeFromFavorites(item: Item) {
-        repository.removeFromFavorites(item)
+    override fun removeFromFavorites(meal: Meal) {
+        repository.removeFromFavorites(meal)
     }
 }

@@ -1,4 +1,4 @@
-package com.mandarinkafe.mandarin.app
+package com.mandarinkafe.mandarin.core.ui
 import android.app.Application
 import com.mandarinkafe.mandarin.di.dataModule
 import com.mandarinkafe.mandarin.di.domainModule

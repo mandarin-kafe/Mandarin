@@ -58,5 +58,7 @@
         <item name="android:layout_gravity">center_horizontal</item>
     </style>
 
-
+    <style name="CustomTabTextStyle" parent="TextAppearance.Design.Tab">
+        <item name="textAllCaps">true</item>
+    </style>
 </resources>

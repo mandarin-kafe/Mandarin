@@ -59,6 +59,7 @@ class RetrofitNetworkClient(private val context: Context, private val ikkoServic
 
 
             } catch (e: Throwable) {
+                Log.d("DEBUG IKKO API", "Ошибка: ${e.message}")
                 Response().apply { resultCode = 500 }
             }
         }

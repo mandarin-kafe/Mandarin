@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mandarinkafe.mandarin.R
 import com.mandarinkafe.mandarin.databinding.ListAdditionalsItemBinding
-import com.mandarinkafe.mandarin.menu.domain.models.Item
+import com.mandarinkafe.mandarin.menu.domain.models.Meal
 
 class MealAdditionalsAdapter(
-    private val additionals: ArrayList<Item>,
+    private val additionals: ArrayList<Meal>,
     private val clickListener: AddsClickListener
 ) :
     RecyclerView.Adapter<MealAdditionalsAdapter.AdditionalsViewHolder>() {
@@ -35,25 +35,25 @@ class MealAdditionalsAdapter(
             0 // TODO временная переменная! брать цифру из логики корзины, а то холдер одну и ту же переменную привязывает к разным товарам
 
 
-        fun bind(item: Item) {
-            setOnClickListeners(item)
+        fun bind(meal: Meal) {
+            setOnClickListeners(meal)
             binding.apply {
                 tvMealTitle.text =
                     itemView.context.getString(
                         R.string.meal_title_with_weight_template,
-                        item.name,
-                        item.weight
+                        meal.name,
+                        meal.weight
                     )
 
                 tvMealPrice.text =
-                    itemView.context.getString(R.string.meal_price_template, item.price)
+                    itemView.context.getString(R.string.meal_price_template, meal.price)
             }
         }
 
-        private fun setOnClickListeners(item: Item) = with(binding) {
+        private fun setOnClickListeners(meal: Meal) = with(binding) {
 
             btCartMinus.setOnClickListener {
-                clickListener.minusToCartClick(item)
+                clickListener.minusToCartClick(meal)
 
                 tvNumberInCart.text =
                     itemView.context.getString(
@@ -63,7 +63,7 @@ class MealAdditionalsAdapter(
                 tvTotalPriceInCart.text =
                     itemView.context.getString(
                         R.string.meal_price_template,
-                        item.price * numberInCart
+                        meal.price * numberInCart
                     )
 
                 if (numberInCart <= 0) {
@@ -71,7 +71,7 @@ class MealAdditionalsAdapter(
                 }
             }
             btCartPlus.setOnClickListener {
-                clickListener.plusToCartClick(item)
+                clickListener.plusToCartClick(meal)
                 extraCartButtonsManager(inCart = true)
                 tvNumberInCart.text =
                     itemView.context.getString(
@@ -82,7 +82,7 @@ class MealAdditionalsAdapter(
                 tvTotalPriceInCart.text =
                     itemView.context.getString(
                         R.string.meal_price_template,
-                        item.price * numberInCart
+                        meal.price * numberInCart
                     )
             }
         }
@@ -105,8 +105,8 @@ class MealAdditionalsAdapter(
 
 
     interface AddsClickListener {
-        fun plusToCartClick(additional: Item)
-        fun minusToCartClick(additional: Item)
+        fun plusToCartClick(additional: Meal)
+        fun minusToCartClick(additional: Meal)
 
     }
 }

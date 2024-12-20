@@ -41,6 +41,10 @@ android {
 }
 
 dependencies {
+
+    implementation(libs.adapterdelegates.dsl)// AdapterDelegates
+    implementation(libs.adapterdelegates.dsl.viewbinding)//  модуль AdapterDelegates для работы с ViewBinding
+
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.fragment.ktx)

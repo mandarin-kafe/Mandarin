@@ -1,16 +1,17 @@
 package com.mandarinkafe.mandarin.menu.data.dto
 
 data class MenuResponse(
-    val itemCategories: List<ItemCategoryDto>,
+    val itemCategories: List<CategoryDto>?,
 ) : Response()
 
-data class ItemCategoryDto(
+data class CategoryDto(
     val id: String,
     val name: String,
-    val items: List<ItemDto>,
+    val items: List<MealDto>,
+    val buttonImageUrl: String?
 )
 
-data class ItemDto(
+data class MealDto(
     val itemId: String,
     val sku: String,
     val name: String,
@@ -25,12 +26,15 @@ data class Tag(
 )
 
 data class ItemSize(
-    val portionWeightGrams: Int,
+    val portionWeightGrams: Double ,
     val prices: List<Price>,
+    val buttonImageUrl: String,
 )
 
 data class Price(
     val organizationId: String,
     val price: Double
 )
+
+
 

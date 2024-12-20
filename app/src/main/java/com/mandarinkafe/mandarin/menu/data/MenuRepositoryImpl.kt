@@ -1,19 +1,20 @@
 package com.mandarinkafe.mandarin.menu.data
 
+
+import android.util.Log
 import com.mandarinkafe.mandarin.menu.data.dto.MenuResponse
 import com.mandarinkafe.mandarin.menu.data.network.NetworkClient
-import com.mandarinkafe.mandarin.menu.domain.api.FavoritesRepository
 import com.mandarinkafe.mandarin.menu.domain.api.MenuRepository
-import com.mandarinkafe.mandarin.menu.domain.models.ItemCategory
+import com.mandarinkafe.mandarin.menu.domain.models.MealCategory
 import com.mandarinkafe.mandarin.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class MenuRepositoryImpl(
     private val networkClient: NetworkClient,
-    private val favoritesRepository: FavoritesRepository
+    private val converter: DtoToDomainConverter
 ) : MenuRepository {
-    override fun getMenu(): Flow<Resource<List<ItemCategory>>> = flow {
+    override fun getMenu(): Flow<Resource<List<MealCategory>>> = flow {
         val response = networkClient.doRequest()
         when (response.resultCode) {
             -1 -> {
@@ -21,12 +22,17 @@ class MenuRepositoryImpl(
             }
 
             200 -> {
-                val stored = favoritesRepository.getFavoriteIds()
-                emit(Resource.Success(ArrayList((response as MenuResponse).itemCategories.map {
-                    it.toDomain(
-                        stored
+                val categories = (response as MenuResponse).itemCategories
+                if (categories != null) {
+                    emit(
+                        Resource.Success(
+                            converter.menuDtoToDomain(categories)
+                        )
                     )
-                })))
+                } else {
+                    Log.e("DEBUG", "response.itemCategories оказался null")
+                    emit(Resource.Error("Сервер вернул пустые данные категорий"))
+                }
             }
 
             else -> {
@@ -34,4 +40,5 @@ class MenuRepositoryImpl(
             }
         }
     }
+
 }

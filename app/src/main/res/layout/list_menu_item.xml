@@ -161,7 +161,6 @@
         android:id="@+id/iv_edit_meal"
         android:layout_width="@dimen/to_cart_button_small_48"
         android:layout_height="@dimen/edit_meal_button_32"
-        android:layout_marginStart="@dimen/small_margin_8"
         android:contentDescription="@string/add_to_favorite"
         app:layout_constraintBottom_toBottomOf="@id/background_for_cart_info"
         app:layout_constraintStart_toEndOf="@id/background_for_cart_info"
