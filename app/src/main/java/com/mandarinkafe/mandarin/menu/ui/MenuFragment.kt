@@ -324,7 +324,7 @@ class MenuFragment : Fragment() {
         _menuAdapter = MenuAdapter(object : MenuAdapter.MealClickListener {
             override fun onMealClick(meal: Meal) {
                 if (clickDebounce()) {
-                    if (meal.categoryId == "pizza") showMealDetails(meal)
+                    if (meal.isEditable) showMealDetails(meal)
                 }
             }
 
