@@ -54,7 +54,7 @@
                 android:background="@android:color/transparent"
                 android:ellipsize="end"
                 android:gravity="center"
-                android:maxLines="1"
+                android:maxLines="2"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -113,8 +113,8 @@
                 style="@style/RegularTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="@dimen/small_margin_8"
                 android:background="@color/app_black_transparent_50"
+                android:paddingHorizontal="@dimen/small_margin_8"
                 tools:text="Моцарелла, сливочно-чесночный соус, шампиньоны, вяленые томаты, сливочно-чесночный соус, шампиньоны, вяленые томаты, сливочно-чесночный соус, шампиньоны, вяленые томаты" />
 
             <LinearLayout
