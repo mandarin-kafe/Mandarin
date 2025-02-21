@@ -15,7 +15,6 @@ import kotlinx.coroutines.withContext
 class RetrofitNetworkClient(private val context: Context, private val ikkoService: IkkoApiService) :
     NetworkClient {
 
-    private var apiLogin = "3a901a233be740bea54bf0a38e1bfaa3"
     private var token = ""
     private var organizationId = ""
     private var externalMenuId = ""
@@ -27,9 +26,9 @@ class RetrofitNetworkClient(private val context: Context, private val ikkoServic
         }
         return withContext(Dispatchers.IO) {
             try {
-                val authResponse = ikkoService.authenticate(AuthRequest(apiLogin))
+                val authResponse = ikkoService.authenticate(AuthRequest(API_LOGIN))
                 token =
-                    "Bearer ${authResponse.token}"
+                    "bearer ${authResponse.token}"
                 Log.d("DEBUG IKKO API", "Токен получен: $token")
 
                 val organizationsResponse = ikkoService.getOrganizations(
@@ -82,4 +81,8 @@ class RetrofitNetworkClient(private val context: Context, private val ikkoServic
         }
         return false
     }
+    companion object {
+        const val API_LOGIN = "3a901a233be740bea54bf0a38e1bfaa3"
+    }
+
 }
