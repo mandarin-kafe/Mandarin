@@ -28,7 +28,7 @@ class RetrofitNetworkClient(private val context: Context, private val ikkoServic
             try {
                 val authResponse = ikkoService.authenticate(AuthRequest(API_LOGIN))
                 token =
-                    "bearer ${authResponse.token}"
+                    "Bearer ${authResponse.token}"
                 Log.d("DEBUG IKKO API", "Токен получен: $token")
 
                 val organizationsResponse = ikkoService.getOrganizations(
